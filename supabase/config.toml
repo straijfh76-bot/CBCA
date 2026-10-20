@@ -1,0 +1,2 @@
+[functions.cbca-api]
+verify_jwt = false

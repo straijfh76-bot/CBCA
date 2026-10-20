@@ -1,0 +1,1 @@
+ALTER TABLE admin_notifications ADD COLUMN IF NOT EXISTS show_once BOOLEAN DEFAULT false;
