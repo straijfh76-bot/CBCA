@@ -1064,7 +1064,7 @@ export default function AdminDashboard() {
   const { selfTxs, subGroups } = isSuper ? buildGroups() : { selfTxs: [], subGroups: [] };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50" translate="no">
+    <div className="min-h-screen flex flex-col" translate="no">
       {generateError && <ErrorToast message={generateError} onClose={() => setGenerateError("")} />}
 
       {/* Delete Confirm Modal */}

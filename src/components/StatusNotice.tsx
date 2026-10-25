@@ -65,7 +65,7 @@ export default function StatusNotice({ tx, blockchainLocked, canModify, onResubm
         <StatusBadge status={tx.review_status as BadgeStatus} corner />
       </div>
 
-      <div className="relative flex items-start gap-3.5 py-4 pl-5 pr-4 pt-5 sm:gap-5 sm:py-5 sm:pl-7 sm:pr-6">
+      <div className="status-notice-body relative flex items-start gap-3.5 py-4 pl-5 pr-4 pt-5 sm:gap-5 sm:py-5 sm:pl-7 sm:pr-6">
         <div className="relative flex-shrink-0">
           {depositPending && <span className={`absolute inset-0 rounded-2xl bg-gradient-to-br ${t.iconBg} animate-ping opacity-20`} />}
           <div className={`relative flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br ${t.iconBg} shadow-md ${t.iconShadow} sm:h-12 sm:w-12 sm:rounded-2xl`}>
@@ -74,7 +74,7 @@ export default function StatusNotice({ tx, blockchainLocked, canModify, onResubm
         </div>
 
         <div className="min-w-0 flex-1">
-          <h2 className={`pr-24 text-[15px] font-bold leading-tight sm:pr-28 sm:text-base ${t.title}`}>{t.heading}</h2>
+          <h2 className={`status-notice-title pr-24 text-[15px] font-bold leading-tight sm:pr-28 sm:text-base ${t.title}`}>{t.heading}</h2>
           <p className={`mt-1.5 text-[13px] leading-relaxed sm:text-sm ${t.body}`}>
             {depositPending && "Your application has been submitted. Please complete the Cross-Border Fee pre-deposit, then contact your department manager to complete the verification confirmation process."}
             {tx.review_status === "pending" && !depositPending && "Your documents are awaiting review. Please stand by."}

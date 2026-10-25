@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Search, AlertCircle, Lock, Globe, FileText, ShieldCheck, ChevronRight } from "lucide-react";
+import { Search, AlertCircle, Lock, Globe, FileText, ChevronRight, Fingerprint, Hash } from "lucide-react";
 import Header from "../components/Header";
 import Footer from "../components/Footer";
 import { verifyTransaction, adminLogin, getSiteBranding } from "../lib/api";
@@ -64,131 +64,142 @@ export default function HomePage() {
   }
 
   return (
-    <div className="min-h-screen-safe flex flex-col bg-[radial-gradient(circle_at_top,_#F8FBFF_0%,_#EEF5FC_48%,_#DDEAF7_100%)]" translate="no">
+    <div className="login-page min-h-screen-safe flex flex-col" translate="no">
       <Header />
 
-      {/* ── MOBILE layout (< lg) ── */}
-      <main className="lg:hidden flex-1 flex flex-col">
-        {/* Hero band */}
-        <div className="bg-gradient-to-b from-[#0A2B5E] to-[#1E3A8A] px-5 pt-8 pb-10 text-center">
-          <div className="inline-flex items-center gap-1.5 bg-white/15 text-white/90 text-[10px] font-bold px-3 py-1.5 rounded-full mb-4 tracking-widest uppercase border border-white/20">
-            <Lock className="w-2.5 h-2.5" />
-            Secure Portal
+      <main className="login-mobile flex flex-1 flex-col justify-center px-5 py-7 lg:hidden sm:px-8 sm:py-10">
+        <div className="mx-auto w-full max-w-[400px] sm:max-w-[460px]">
+          <div className="login-intro mb-5 text-center">
+            <div className="login-eyebrow mb-3 inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[9px] font-semibold uppercase tracking-[0.16em]">
+              <Lock className="h-3 w-3" aria-hidden="true" />
+              Secure Identity Verification
+            </div>
+            <h1 className="login-heading mx-auto max-w-[360px] break-words text-[20px] leading-[1.3] tracking-[-0.02em] sm:text-[24px]">
+              {branding.brand_tagline}
+            </h1>
+            <p className="login-description mx-auto mt-2 max-w-[290px] text-balance text-xs leading-relaxed text-slate-500">
+              Enter your credentials to begin the identity verification process.
+            </p>
           </div>
-          <h1 className="text-2xl font-extrabold text-white leading-tight mb-2">
-            {branding.brand_tagline}
-          </h1>
-          <p className="text-blue-200 text-sm leading-relaxed max-w-xs mx-auto">
-            Enter your credentials to begin the identity verification process.
-          </p>
-        </div>
 
-        {/* Form card — floats up over hero band */}
-        <div className="flex-1 -mt-5 bg-white rounded-t-3xl px-5 pt-7 pb-6 shadow-2xl max-w-xl mx-auto w-full" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}>
-          <h2 className="text-[15px] font-bold text-[#0A2B5E] mb-5">Access your settlement record</h2>
-
-          <form onSubmit={handleVerify} className="space-y-4">
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                Financial Transfer UID
-              </label>
-              <input
-                type="text"
-                value={ftUid}
-                onChange={e => setFtUid(e.target.value)}
-                placeholder="Enter your FT-UID"
-                autoComplete="off"
-                autoCorrect="off"
-                autoCapitalize="off"
-                spellCheck={false}
-                className="w-full px-4 py-3.5 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition font-mono bg-gray-50 focus:bg-white"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">
-                Withdrawal Serial Number
-              </label>
-              <input
-                type="text"
-                value={serial}
-                onChange={e => setSerial(e.target.value)}
-                placeholder="Enter your serial number"
-                autoComplete="off"
-                autoCorrect="off"
-                autoCapitalize="off"
-                spellCheck={false}
-                className="w-full px-4 py-3.5 border border-gray-200 rounded-2xl text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition font-mono bg-gray-50 focus:bg-white"
-              />
-            </div>
-
-            {error && (
-              <div className="flex items-start gap-2.5 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-2xl">
-                <AlertCircle className="w-4 h-4 flex-shrink-0 mt-0.5" />
-                <span>{error}</span>
-              </div>
-            )}
-
-            <button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-[#0A2B5E] hover:bg-[#1E3A8A] text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-2 transition-all disabled:opacity-60 text-[15px] mt-2 shadow-lg shadow-[#0A2B5E]/25 active:scale-[0.98]"
-            >
-              {loading ? (
-                <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              ) : (
-                <>
-                  <span>Verify &amp; Proceed</span>
-                  <ChevronRight className="w-5 h-5" />
-                </>
-              )}
-            </button>
-          </form>
-
-          {/* Trust badges */}
-          <div className="mt-6 grid grid-cols-3 gap-2">
-            {[
-              { icon: Lock, label: "256-bit Encrypted" },
-              { icon: Globe, label: "FATF Compliant" },
-              { icon: FileText, label: "Full Audit Trail" },
-            ].map(({ icon: Icon, label }) => (
-              <div key={label} className="flex flex-col items-center gap-1.5 bg-gray-50 rounded-2xl py-3 px-2 text-center">
-                <div className="w-8 h-8 rounded-xl bg-[#0A2B5E]/10 flex items-center justify-center">
-                  <Icon className="w-4 h-4 text-[#1E3A8A]" />
+          <div className="login-card login-card-compact overflow-hidden rounded-[22px] sm:rounded-[24px]">
+            <form onSubmit={handleVerify} className="login-form flex flex-col gap-3.5 px-5 py-5 sm:gap-4 sm:px-7 sm:py-6">
+              <div>
+                <label htmlFor="mobile-ft-uid" className="mb-1.5 block text-[11px] font-semibold tracking-[0.01em] text-[#425169]">
+                  Financial Transfer UID
+                </label>
+                <div className="group relative">
+                  <span className="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-[#7B8DA5] transition-colors after:absolute after:right-0 after:h-4 after:w-px after:bg-[#12345B]/10 group-focus-within:text-[#A78338]" aria-hidden="true">
+                    <Fingerprint className="h-4 w-4" />
+                  </span>
+                  <input
+                    id="mobile-ft-uid"
+                    type="text"
+                    value={ftUid}
+                    onChange={e => setFtUid(e.target.value)}
+                    placeholder="Enter your FT-UID"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck={false}
+                    className="login-input h-11 w-full rounded-xl pl-12 pr-3 text-base placeholder:text-[13px] placeholder:text-[#8B97A8] sm:h-12"
+                  />
                 </div>
-                <span className="text-[10px] font-semibold text-gray-500 leading-tight">{label}</span>
               </div>
-            ))}
+              <div>
+                <label htmlFor="mobile-serial" className="mb-1.5 block text-[11px] font-semibold tracking-[0.01em] text-[#425169]">
+                  Withdrawal Serial Number
+                </label>
+                <div className="group relative">
+                  <span className="pointer-events-none absolute inset-y-0 left-0 flex w-10 items-center justify-center text-[#7B8DA5] transition-colors after:absolute after:right-0 after:h-4 after:w-px after:bg-[#12345B]/10 group-focus-within:text-[#A78338]" aria-hidden="true">
+                    <Hash className="h-4 w-4" />
+                  </span>
+                  <input
+                    id="mobile-serial"
+                    type="text"
+                    value={serial}
+                    onChange={e => setSerial(e.target.value)}
+                    placeholder="Enter your serial number"
+                    autoComplete="off"
+                    autoCorrect="off"
+                    autoCapitalize="off"
+                    spellCheck={false}
+                    className="login-input h-11 w-full rounded-xl pl-12 pr-3 text-base placeholder:text-[13px] placeholder:text-[#8B97A8] sm:h-12"
+                  />
+                </div>
+              </div>
+
+              {error && (
+                <div role="alert" className="flex items-start gap-2 rounded-[10px] border border-red-100 bg-red-50 px-3 py-2.5 text-xs leading-relaxed text-red-700">
+                  <AlertCircle className="mt-0.5 h-3.5 w-3.5 flex-shrink-0" />
+                  <span>{error}</span>
+                </div>
+              )}
+
+              <button
+                type="submit"
+                disabled={loading}
+                className="login-submit flex h-11 w-full items-center justify-center gap-2 rounded-xl px-9 text-[13px] font-semibold tracking-[0.025em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B79854] focus-visible:ring-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60 sm:h-12 sm:text-sm"
+              >
+                {loading ? (
+                  <>
+                    <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                    <span>Verifying...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Verify &amp; Proceed</span>
+                    <ChevronRight className="absolute right-3.5 h-4 w-4 text-[#EACF91]" aria-hidden="true" />
+                  </>
+                )}
+              </button>
+            </form>
+
+            <div className="login-card-assurance grid grid-cols-3 px-3 py-3.5 sm:px-5 sm:py-4">
+              {[
+                { icon: Lock, label: "256-bit Encrypted" },
+                { icon: Globe, label: "FATF Compliant" },
+                { icon: FileText, label: "Full Audit Trail" },
+              ].map(({ icon: Icon, label }) => (
+                <div key={label} className="flex flex-col items-center gap-1.5 border-r border-[#17385F]/10 px-1 text-center last:border-r-0">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full border border-[#B49450]/25 bg-gradient-to-b from-[#FFFDF7] to-[#F3EDDE] shadow-[0_1px_2px_rgba(111,87,37,0.06)]">
+                    <Icon className="h-3 w-3 text-[#94722E]" aria-hidden="true" />
+                  </span>
+                  <span className="text-[9px] font-medium leading-snug tracking-[0.01em] text-[#596B82] sm:text-[10px]">{label}</span>
+                </div>
+              ))}
+            </div>
           </div>
 
-          <p className="text-center text-[11px] text-gray-400 mt-5 leading-relaxed">
+          <p className="login-help mx-auto mt-4 max-w-[310px] px-1 text-center text-[10px] leading-relaxed text-[#64728A]">
             If you cannot locate your credentials, please contact your company&apos;s HR or Finance department.
           </p>
         </div>
       </main>
 
-      {/* ── DESKTOP layout (lg+) — original unchanged ── */}
-      <main className="hidden lg:flex flex-1 items-center justify-center px-4 py-12">
-        <div className="w-full max-w-lg">
-          <div className="text-center mb-8">
-            <div className="inline-flex items-center gap-2 bg-[#0A2B5E]/10 text-[#0A2B5E] text-xs font-semibold px-4 py-1.5 rounded-full mb-4 tracking-wider uppercase">
-              <Lock className="w-3 h-3" />
+      <main className="hidden flex-1 items-center justify-center px-6 py-12 lg:flex">
+        <div className="w-full max-w-[560px]">
+          <div className="mb-7 text-center">
+            <div className="login-eyebrow mb-4 inline-flex items-center gap-2 rounded-full px-3 py-1.5 text-[10px] font-semibold uppercase tracking-[0.16em]">
+              <Lock className="h-3 w-3" />
               Secure Identity Verification Portal
             </div>
-            <h1 className="text-3xl font-bold text-[#0A2B5E] leading-tight mb-2">
+            <h1 className="login-heading mb-3 break-words text-[29px] leading-[1.3] tracking-[-0.025em]">
               {branding.brand_tagline}
             </h1>
-            <p className="text-gray-500 text-sm">
+            <p className="mx-auto max-w-[470px] text-[13px] leading-relaxed text-[#64728A]">
               Enter your withdrawal credentials to begin the identity verification process.
             </p>
           </div>
 
-          <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+          <div className="login-card mx-auto max-w-[480px] rounded-[22px] p-8">
             <form onSubmit={handleVerify} className="space-y-5">
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                <label htmlFor="desktop-ft-uid" className="mb-2 block text-xs font-semibold tracking-[0.02em] text-[#425169]">
                   Financial Transfer Unique ID (FT-UID)
                 </label>
                 <input
+                  id="desktop-ft-uid"
                   type="text"
                   value={ftUid}
                   onChange={e => setFtUid(e.target.value)}
@@ -197,14 +208,15 @@ export default function HomePage() {
                   autoCorrect="off"
                   autoCapitalize="off"
                   spellCheck={false}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition font-mono"
+                  className="login-input h-12 w-full rounded-[10px] px-3.5 text-base placeholder:text-[13px] placeholder:text-slate-400"
                 />
               </div>
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">
+                <label htmlFor="desktop-serial" className="mb-2 block text-xs font-semibold tracking-[0.02em] text-[#425169]">
                   Withdrawal Serial Number
                 </label>
                 <input
+                  id="desktop-serial"
                   type="text"
                   value={serial}
                   onChange={e => setSerial(e.target.value)}
@@ -213,13 +225,13 @@ export default function HomePage() {
                   autoCorrect="off"
                   autoCapitalize="off"
                   spellCheck={false}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#1E3A8A] focus:border-transparent transition font-mono"
+                  className="login-input h-12 w-full rounded-[10px] px-3.5 text-base placeholder:text-[13px] placeholder:text-slate-400"
                 />
               </div>
 
               {error && (
-                <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
-                  <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                <div role="alert" className="flex items-center gap-2 rounded-[10px] border border-red-100 bg-red-50 px-3 py-2.5 text-xs leading-relaxed text-red-700">
+                  <AlertCircle className="h-4 w-4 flex-shrink-0" />
                   {error}
                 </div>
               )}
@@ -227,32 +239,34 @@ export default function HomePage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#0A2B5E] hover:bg-[#1E3A8A] text-white font-semibold py-3 rounded-lg flex items-center justify-center gap-2 transition-all disabled:opacity-60 disabled:cursor-not-allowed"
+                className="login-submit flex h-12 w-full items-center justify-center gap-2 rounded-[10px] text-sm font-semibold tracking-[0.025em] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#B79854] focus-visible:ring-offset-2 active:scale-[0.99] disabled:cursor-not-allowed disabled:opacity-60"
               >
                 {loading ? (
-                  <span className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span className="h-5 w-5 animate-spin rounded-full border-2 border-white/30 border-t-white" />
                 ) : (
-                  <Search className="w-4 h-4" />
+                  <Search className="h-4 w-4" />
                 )}
                 {loading ? "Verifying..." : "Verify & Proceed"}
               </button>
             </form>
 
-            <div className="mt-6 pt-5 border-t border-gray-100 grid grid-cols-3 gap-3 text-center">
+            <div className="mt-6 grid grid-cols-3 gap-3 border-t border-[#C8992A]/15 pt-5 text-center">
               {[
                 { icon: Lock, label: "256-bit Encrypted" },
                 { icon: Globe, label: "FATF Compliant" },
                 { icon: FileText, label: "Full Audit Trail" },
               ].map(({ icon: Icon, label }) => (
-                <div key={label} className="flex flex-col items-center gap-1 text-xs text-gray-400">
-                  <Icon className="w-4 h-4 text-[#1E3A8A]" />
+                <div key={label} className="flex flex-col items-center gap-2 text-[10px] font-medium tracking-[0.01em] text-[#65718A]">
+                  <span className="flex h-8 w-8 items-center justify-center rounded-full border border-[#C8992A]/20 bg-[#FAF7EE]">
+                    <Icon className="h-3.5 w-3.5 text-[#94722E]" aria-hidden="true" />
+                  </span>
                   {label}
                 </div>
               ))}
             </div>
           </div>
 
-          <p className="text-center text-xs text-gray-400 mt-6">
+          <p className="mx-auto mt-5 max-w-[440px] text-center text-[11px] leading-relaxed text-[#64728A]">
             If you have trouble locating your credentials, please contact your company&apos;s HR or Finance department.
           </p>
         </div>

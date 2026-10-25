@@ -421,7 +421,7 @@ export default function AdminTransactionPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center">
         <span className="w-8 h-8 border-2 border-[#1E3A8A]/20 border-t-[#1E3A8A] rounded-full animate-spin" />
       </div>
     );
@@ -429,7 +429,7 @@ export default function AdminTransactionPage() {
 
   if (!tx) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
           <AlertCircle className="w-8 h-8 text-red-400 mx-auto mb-2" />
           <p className="text-gray-500">找不到該筆交易。</p>
@@ -443,7 +443,7 @@ export default function AdminTransactionPage() {
   const confirmedSubmissions = submissions.filter(s => s.code_confirmed);
 
   return (
-    <div className="min-h-screen lg:h-screen bg-slate-100/70 flex flex-col lg:overflow-hidden" translate="no">
+    <div className="min-h-screen lg:h-screen flex flex-col lg:overflow-hidden" translate="no">
       {txError && <ErrorToast message={txError} onClose={() => setTxError("")} />}
       {reviewError && <ErrorToast message={reviewError} onClose={() => setReviewError("")} />}
 
@@ -741,10 +741,10 @@ export default function AdminTransactionPage() {
         </div>
       </nav>
 
-      <main className="flex-1 min-h-0 w-full bg-white">
+      <main className="flex-1 min-h-0 w-full bg-white/60">
 
         {activeTab === "config" && (
-          <div className="grid grid-cols-1 lg:grid-cols-10 lg:h-full divide-y lg:divide-y-0 lg:divide-x divide-slate-200 bg-white">
+          <div className="grid grid-cols-1 lg:grid-cols-10 lg:h-full divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
             <section className="lg:col-span-3 bg-gradient-to-b from-[#EEF3FA] to-[#E3EBF6] p-6 flex flex-col min-h-0">
               <h3 className="font-semibold text-[15px] text-[#0A2B5E] flex items-center gap-2 pb-3 mb-4 border-b border-blue-200/70 flex-shrink-0">
                 <span className="w-7 h-7 rounded-lg bg-[#0A2B5E] flex items-center justify-center"><Hash className="w-3.5 h-3.5 text-white" /></span>
@@ -902,7 +902,7 @@ export default function AdminTransactionPage() {
         )}
 
         {activeTab === "review" && (
-          <div className="grid grid-cols-1 lg:grid-cols-5 lg:h-full divide-y lg:divide-y-0 lg:divide-x divide-slate-200 bg-white">
+          <div className="grid grid-cols-1 lg:grid-cols-5 lg:h-full divide-y lg:divide-y-0 lg:divide-x divide-slate-200">
             <section className="lg:col-span-3 p-6 flex flex-col gap-4 min-h-0 lg:overflow-y-auto">
               <h3 className="font-semibold text-[15px] text-[#0A2B5E] flex items-center gap-2 pb-3 border-b border-slate-200 flex-shrink-0">
                 <Shield className="w-4 h-4 text-[#1E3A8A]" />
@@ -1072,7 +1072,7 @@ export default function AdminTransactionPage() {
         )}
 
         {activeTab === "kyc" && (
-          <section className="bg-white p-6 flex flex-col lg:h-full min-h-0">
+          <section className="p-6 flex flex-col lg:h-full min-h-0">
             <div className="flex items-center justify-between gap-3 mb-4 flex-wrap flex-shrink-0">
               <h3 className="font-semibold text-[15px] text-[#0A2B5E] flex items-center gap-2.5">
                 <CreditCard className="w-4 h-4 text-[#1E3A8A]" />

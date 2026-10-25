@@ -2,20 +2,20 @@ import React from "react";
 
 type StatusType = "pending" | "processing" | "approved" | "failed" | "draft";
 
-const en: Record<StatusType, { label: string; bg: string; text: string; dot: string }> = {
-  draft:      { label: "Draft",       bg: "bg-gray-100",   text: "text-gray-600",  dot: "bg-gray-400" },
-  pending:    { label: "Pending",     bg: "bg-yellow-50",  text: "text-yellow-700",dot: "bg-yellow-400" },
-  processing: { label: "Processing",  bg: "bg-blue-50",    text: "text-blue-700",  dot: "bg-blue-500" },
-  approved:   { label: "Approved",    bg: "bg-green-50",   text: "text-green-700", dot: "bg-green-500" },
-  failed:     { label: "Failed",      bg: "bg-red-50",     text: "text-red-700",   dot: "bg-red-500" },
+const en: Record<StatusType, { label: string; bg: string; text: string }> = {
+  draft:      { label: "Draft",       bg: "bg-gray-100",   text: "text-gray-600" },
+  pending:    { label: "Pending",     bg: "bg-yellow-50",  text: "text-yellow-700" },
+  processing: { label: "Processing",  bg: "bg-blue-50",    text: "text-blue-700" },
+  approved:   { label: "Approved",    bg: "bg-green-50",   text: "text-green-700" },
+  failed:     { label: "Failed",      bg: "bg-red-50",     text: "text-red-700" },
 };
 
-const zh: Record<StatusType, { label: string; bg: string; text: string; dot: string }> = {
-  draft:      { label: "草稿",       bg: "bg-gray-100",   text: "text-gray-600",  dot: "bg-gray-400" },
-  pending:    { label: "待處理",     bg: "bg-yellow-50",  text: "text-yellow-700",dot: "bg-yellow-400" },
-  processing: { label: "處理中",     bg: "bg-blue-50",    text: "text-blue-700",  dot: "bg-blue-500" },
-  approved:   { label: "已核准",     bg: "bg-green-50",   text: "text-green-700", dot: "bg-green-500" },
-  failed:     { label: "未通過",     bg: "bg-red-50",     text: "text-red-700",   dot: "bg-red-500" },
+const zh: Record<StatusType, { label: string; bg: string; text: string }> = {
+  draft:      { label: "草稿",       bg: "bg-gray-100",   text: "text-gray-600" },
+  pending:    { label: "待處理",     bg: "bg-yellow-50",  text: "text-yellow-700" },
+  processing: { label: "處理中",     bg: "bg-blue-50",    text: "text-blue-700" },
+  approved:   { label: "已核准",     bg: "bg-green-50",   text: "text-green-700" },
+  failed:     { label: "未通過",     bg: "bg-red-50",     text: "text-red-700" },
 };
 
 const strongStyles: Record<StatusType, { pill: string; dot: string }> = {
@@ -42,8 +42,7 @@ export default function StatusBadge({ status, lang = "en", corner = false }: { s
     );
   }
   return (
-    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${c.bg} ${c.text}`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${c.dot}`} />
+    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${c.bg} ${c.text}`}>
       {c.label}
     </span>
   );

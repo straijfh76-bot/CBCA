@@ -30,7 +30,7 @@ class ErrorBoundary extends React.Component<
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen-safe flex flex-col items-center justify-center bg-[radial-gradient(circle_at_top,_#F8FBFF_0%,_#EEF5FC_48%,_#DDEAF7_100%)] px-4 text-center">
+        <div className="min-h-screen-safe flex flex-col items-center justify-center px-4 text-center">
           <div className="relative w-full max-w-[380px] overflow-hidden rounded-[28px] bg-white shadow-[0_24px_64px_-12px_rgba(6,20,46,0.3)] ring-1 ring-black/5 animate-dialog-pop">
             <div className="h-1 bg-gradient-to-r from-rose-400 via-red-500 to-rose-600" />
             <div className="pointer-events-none absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-rose-100/80 via-red-50/50 to-transparent" />

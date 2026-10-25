@@ -38,18 +38,18 @@ function markSeen(id: string, show_once: boolean, ftUid: string): void {
   if (!seen.includes(id)) store.setItem(key, JSON.stringify([...seen, id]));
 }
 
-function BrandMark({ size = 40 }: { size?: number }) {
+function BrandMark() {
   const uid = useId().replace(/:/g, "");
   return (
-    <div className="relative rounded-xl overflow-hidden flex-shrink-0" style={{ width: size, height: size }}>
-      <div className="absolute inset-0 rounded-xl bg-gradient-to-b from-[#efd68e] via-[#C8992A] to-[#8f6a18] p-[1.5px] shadow-[0_10px_30px_-12px_rgba(0,0,0,0.85)]">
-        <div className="w-full h-full rounded-[10px] bg-gradient-to-br from-[#1d4a8f] via-[#0A2B5E] to-[#051d3f] flex items-center justify-center">
-          <svg viewBox="0 0 32 32" className="w-[76%] h-[76%]">
+    <div className="relative h-9 w-9 flex-shrink-0 rounded-xl shadow-[0_5px_16px_rgba(0,13,36,0.35),0_0_14px_rgba(200,153,42,0.08)] lg:h-11 lg:w-11" aria-hidden="true">
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-[#F6E3A8] via-[#C8992A] to-[#8F6A18] p-[1.5px]">
+        <div className="flex h-full w-full items-center justify-center rounded-[10px] bg-gradient-to-br from-[#1D4A8F] via-[#0A2B5E] to-[#051D3F] shadow-[inset_0_1px_5px_rgba(255,238,194,0.24),inset_0_-3px_6px_rgba(0,12,32,0.3)]">
+          <svg viewBox="0 0 32 32" className="h-[76%] w-[76%]">
             <defs>
               <linearGradient id={`${uid}-gold`} x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor="#f6e3a8" />
+                <stop offset="0" stopColor="#F6E3A8" />
                 <stop offset="0.5" stopColor="#C8992A" />
-                <stop offset="1" stopColor="#9a7220" />
+                <stop offset="1" stopColor="#9A7220" />
               </linearGradient>
             </defs>
             <path d="M16 2.6l10.4 3.6v8.6c0 6.7-4.3 11.6-10.4 14.6C9.9 26.4 5.6 21.5 5.6 14.8V6.2z" fill="#0A2B5E" stroke={`url(#${uid}-gold)`} strokeWidth="1.5" strokeLinejoin="round" />
@@ -127,75 +127,34 @@ export default function Header({ ftUid }: Props) {
 
   return (
     <>
-      <header className="sticky top-0 z-40 bg-[#0A2B5E] text-white shadow-xl border-b border-[#1a3f7a]" style={{ paddingTop: "env(safe-area-inset-top, 0px)", paddingLeft: "env(safe-area-inset-left, 0px)", paddingRight: "env(safe-area-inset-right, 0px)" }}>
-        {/* Mobile header */}
-        <div className="lg:hidden">
-          <div className="flex items-center justify-between px-4 py-3">
-            <div className="flex items-center gap-3">
-              <BrandMark size={36} />
-              <div className="flex flex-col min-w-0">
-                <span className="text-[15px] font-extrabold tracking-[0.18em] leading-none text-white">{branding.brand_code}</span>
-                <span className="block h-px w-5 bg-gradient-to-r from-[#C8992A] to-transparent my-1" />
-                <span className="text-[9px] text-blue-200/80 tracking-[0.24em] uppercase leading-none font-medium truncate">{branding.brand_short}</span>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-2">
-              {ftUid && (
-                <button
-                  onClick={openDrawer}
-                  className="relative flex items-center justify-center w-8 h-8 rounded-full hover:bg-white/10 transition"
-                  aria-label="Message history"
-                >
-                  <Bell className="w-4 h-4 text-blue-200" />
-                  {unread > 0 && (
-                    <span className="absolute -top-0.5 -right-0.5 min-w-[16px] h-4 rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-0.5">
-                      {unread > 9 ? "9+" : unread}
-                    </span>
-                  )}
-                </button>
-              )}
+      <header className="site-header sticky top-0 z-40 flex-shrink-0 text-white" style={{ paddingTop: "env(safe-area-inset-top, 0px)", paddingLeft: "env(safe-area-inset-left, 0px)", paddingRight: "env(safe-area-inset-right, 0px)" }}>
+        <div className="relative mx-auto flex h-16 max-w-7xl items-center justify-between gap-4 px-5 sm:px-8 lg:h-20">
+          <span className="pointer-events-none absolute inset-y-0 left-2 w-[3px] bg-gradient-to-b from-[#EFD68E] via-[#C8992A] to-[#8F6A18] shadow-[5px_0_0_-1px_rgba(200,153,42,0.2)] sm:left-4 lg:w-1" aria-hidden="true" />
+          <div className="flex min-w-0 items-center gap-2.5 lg:gap-3.5">
+            <BrandMark />
+            <div className="flex min-w-0 flex-col gap-1 lg:gap-1.5">
+              <span className="truncate font-['Archivo',sans-serif] text-[20px] font-extrabold leading-none tracking-[0.14em] text-[#FFF8E7] [font-stretch:125%] [text-shadow:0_2px_10px_rgba(0,0,0,0.18)] lg:text-[27px]">{branding.brand_code}</span>
+              <span className="h-px w-8 bg-gradient-to-r from-[#EFD68E] via-[#C8992A] to-[#C8992A]/30 lg:w-10" aria-hidden="true" />
+              <span className="truncate text-[8px] font-semibold uppercase leading-none tracking-[0.04em] text-[#D4C6A4] min-[360px]:tracking-[0.16em] lg:hidden">{branding.brand_tagline}</span>
+              <span className="hidden truncate text-[10px] font-semibold uppercase leading-none tracking-[0.2em] text-[#D4C6A4] lg:block">{branding.brand_tagline}</span>
             </div>
           </div>
-          <div className="h-[2px] bg-gradient-to-r from-[#C8992A] via-[#e8b84b] to-[#C8992A]" />
-        </div>
-
-        {/* Desktop header */}
-        <div className="hidden lg:block">
-          <div className="max-w-7xl mx-auto px-4 py-0 flex items-stretch justify-between">
-            <div className="flex items-stretch gap-0">
-              <div className="w-1 bg-gradient-to-b from-[#efd68e] via-[#C8992A] to-[#8f6a18] self-stretch mr-5" />
-              <div className="flex items-center my-3">
-                <BrandMark size={44} />
-                <div className="flex flex-col justify-center ml-3.5">
-                  <span className="text-[1.25rem] font-extrabold tracking-[0.2em] leading-none text-white">{branding.brand_code}</span>
-                  <span className="block h-px w-8 bg-gradient-to-r from-[#C8992A] to-transparent my-[6px]" />
-                  <span className="text-[10px] text-blue-200/90 tracking-[0.26em] uppercase leading-none font-medium">
-                    {branding.brand_tagline}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              {ftUid && (
-                <button
-                  onClick={openDrawer}
-                  className="relative flex items-center gap-2 px-3 py-1.5 rounded-full border border-blue-400/30 hover:bg-white/10 transition"
-                  aria-label="Message history"
-                >
-                  <Bell className="w-4 h-4 text-blue-200" />
-                  <span className="text-[11px] text-blue-200 font-medium">Messages</span>
-                  {unread > 0 && (
-                    <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] rounded-full bg-red-500 text-white text-[10px] font-bold flex items-center justify-center px-0.5">
-                      {unread > 9 ? "9+" : unread}
-                    </span>
-                  )}
-                </button>
+          {ftUid && (
+            <button
+              onClick={openDrawer}
+              className="relative flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-xl border border-[#C8992A]/30 bg-white/[0.03] text-[#E8CD8B] transition hover:border-[#E8CD8B]/60 hover:bg-[#C8992A]/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8CD8B]"
+              aria-label="Message history"
+            >
+              <Bell className="h-4 w-4" />
+              {unread > 0 && (
+                <span className="absolute -right-1 -top-1 flex h-[18px] min-w-[18px] items-center justify-center rounded-full bg-red-500 px-1 text-[10px] font-bold text-white ring-2 ring-[#0A2B5E]">
+                  {unread > 9 ? "9+" : unread}
+                </span>
               )}
-            </div>
-          </div>
-          <div className="h-[2px] bg-gradient-to-r from-[#C8992A] via-[#e8b84b] to-[#C8992A]" />
+            </button>
+          )}
         </div>
+        <div className="h-px bg-gradient-to-r from-[#C8992A] via-[#E8B84B] to-[#C8992A] shadow-[0_-1px_0_#C8992A]" aria-hidden="true" />
       </header>
 
       {drawerOpen && (

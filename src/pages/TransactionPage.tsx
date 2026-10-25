@@ -192,7 +192,7 @@ export default function TransactionPage() {
   };
 
   return (
-    <div className="min-h-screen-safe flex flex-col bg-[radial-gradient(circle_at_top,_#F8FBFF_0%,_#EEF5FC_48%,_#DDEAF7_100%)]">
+    <div className="min-h-screen-safe flex flex-col">
       <Header ftUid={ftUid} />
 
 

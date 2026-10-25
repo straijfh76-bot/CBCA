@@ -61,14 +61,11 @@ export default function SubmittedPage() {
       ];
 
   return (
-    <div className="min-h-screen-safe flex flex-col bg-[radial-gradient(circle_at_top,_#F8FBFF_0%,_#EEF5FC_48%,_#DDEAF7_100%)]">
+    <div className="min-h-screen-safe flex flex-col">
       <Header />
 
-      <main className="flex-1 w-full bg-[linear-gradient(180deg,#F7FAFD_0%,#F2F7FC_42%,#EAF2F9_100%)] [&>section>div:first-child]:hidden">
-        <section className="relative overflow-hidden bg-gradient-to-b from-[#F8FBFF] via-[#F3F8FD] to-[#F2F7FC] px-4 pt-6 pb-24 sm:px-6 sm:pt-8 sm:pb-28 lg:px-8 lg:pt-10 lg:pb-32">
-          <div className="pointer-events-none absolute inset-0 opacity-[0.35] [background-image:radial-gradient(#0A2B5E_0.6px,transparent_0.6px)] [background-size:18px_18px] [mask-image:linear-gradient(to_bottom,black,transparent)]" />
-          <div className="pointer-events-none absolute -top-28 right-[8%] h-64 w-64 rounded-full bg-[#C8992A]/10 blur-3xl" />
-          <div className="pointer-events-none absolute -top-20 left-[6%] h-56 w-56 rounded-full bg-emerald-300/15 blur-3xl" />
+      <main className="flex-1 w-full">
+        <section className="relative overflow-hidden px-4 pt-6 pb-24 sm:px-6 sm:pt-8 sm:pb-28 lg:px-8 lg:pt-10 lg:pb-32">
 
           <div className="relative mx-auto max-w-4xl px-1 sm:px-2 [&_h1]:!text-[1.45rem] sm:[&_h1]:!text-2xl lg:[&_h1]:!text-3xl [&_p]:!max-w-none [&>div:first-child]:!grid [&>div:first-child]:!w-full [&>div:first-child]:!max-w-none [&>div:first-child]:!grid-cols-1 [&>div:first-child]:!gap-4 sm:[&>div:first-child]:!grid-cols-[auto_minmax(0,1fr)] sm:[&>div:first-child]:!gap-5 [&>div:first-child]:!text-center sm:[&>div:first-child]:!text-left [&>div:first-child>div:first-child]:!mx-auto sm:[&>div:first-child>div:first-child]:!mx-0 [&>div:first-child>div:first-child]:!h-14 [&>div:first-child>div:first-child]:!w-14 sm:[&>div:first-child>div:first-child]:!h-16 sm:[&>div:first-child>div:first-child]:!w-16 [&>div:first-child>div:first-child_svg]:!h-7 [&>div:first-child>div:first-child_svg]:!w-7 sm:[&>div:first-child>div:first-child_svg]:!h-8 sm:[&>div:first-child>div:first-child_svg]:!w-8 [&_h1]:!mt-2.5 [&_h1+span]:!mt-2.5 [&_h1+span+p]:!mt-2.5">
             <div className="flex w-full max-w-2xl flex-col items-center text-center md:flex-row md:items-center md:text-left gap-3 sm:gap-4 md:gap-6 animate-dialog-pop">

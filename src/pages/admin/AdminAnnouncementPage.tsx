@@ -203,7 +203,7 @@ export default function AdminAnnouncementPage() {
   const previewSeconds = isSuper ? globalSeconds : (activeTab === "custom" ? subSeconds : globalSeconds);
 
   return (
-    <div className="min-h-screen bg-gray-50" translate="no">
+    <div className="min-h-screen" translate="no">
       <header className="bg-[#0A2B5E] text-white shadow-lg sticky top-0 z-10">
         <div className="max-w-4xl mx-auto px-4 py-3 flex items-center gap-3">
           <button onClick={() => navigate("/admin/dashboard")} className="p-1.5 hover:bg-white/10 rounded-lg transition">

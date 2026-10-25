@@ -108,7 +108,7 @@ export default function AdminUsersPage() {
   const superAdmins = admins.filter(a => a.role === "super");
 
   return (
-    <div className="min-h-screen bg-gray-50" translate="no">
+    <div className="min-h-screen" translate="no">
       {/* Header */}
       <header className="bg-[#0A2B5E] text-white shadow-lg sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 py-3 flex items-center gap-3">
