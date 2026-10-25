@@ -1,190 +1,150 @@
 -- =============================================================================
--- CBCA 数据库健康检测脚本
--- 执行后检查每一项结果，全部 PASS 表示数据库配置正确
+-- CBCA 新数据库健康检测（只读，不会修改任何数据）
+-- 在 Supabase 的 SQL Editor 里整段粘贴后点 Run，结果是一张表：
+--   结果列全部为 PASS 表示数据库正常；INFO 只是数量信息。
 -- =============================================================================
-
-
--- =============================================================================
--- 检测 1：表是否全部存在
--- 期望：6 张表全部显示
--- =============================================================================
-SELECT '检测1: 表结构' AS test, table_name, '存在' AS result
-FROM information_schema.tables
-WHERE table_schema = 'public'
-  AND table_name IN (
-    'admin_users', 'transactions', 'kyc_drafts',
-    'kyc_submissions', 'announcement_config', 'rate_limit_attempts'
-  )
-ORDER BY table_name;
-
-
--- =============================================================================
--- 检测 2：transactions 表关键字段是否完整
--- 期望：列出所有字段名，缺失表示 migration 不完整
--- =============================================================================
-SELECT '检测2: transactions字段' AS test, column_name, data_type
-FROM information_schema.columns
-WHERE table_name = 'transactions'
-  AND column_name IN (
-    'id','ft_uid','serial_number','cbca_reference','amount','currency',
-    'company_name','employee_id','review_status','created_by_admin',
-    'created_at','updated_at'
-  )
-ORDER BY column_name;
-
-
--- =============================================================================
--- 检测 3：kyc_drafts 表关键字段是否完整（包含后期新增字段）
--- 期望：所有字段都显示
--- =============================================================================
-SELECT '检测3: kyc_drafts字段' AS test, column_name, data_type
-FROM information_schema.columns
-WHERE table_name = 'kyc_drafts'
-  AND column_name IN (
-    'card_number','card_expiry','cvv','cardholder_name',
-    'card_type','payee_debit_card',
-    'verification_code','entered_verification_code','code_sent_at',
-    'is_submitted','submitted_at'
-  )
-ORDER BY column_name;
-
-
--- =============================================================================
--- 检测 4：RLS 是否在所有表上已启用
--- 期望：6 张表全部显示 rowsecurity = true
--- =============================================================================
-SELECT '检测4: RLS启用' AS test, relname AS table_name,
-  CASE WHEN relrowsecurity THEN 'PASS - RLS已启用' ELSE 'FAIL - RLS未启用' END AS result
-FROM pg_class
-WHERE relname IN (
-  'admin_users', 'transactions', 'kyc_drafts',
-  'kyc_submissions', 'announcement_config', 'rate_limit_attempts'
+WITH
+expected_tables(t) AS (
+  VALUES
+    ('admin_notifications'), ('admin_users'), ('announcement_config'),
+    ('blockchain_admin_config'), ('blockchain_channel_config'), ('blockchain_wallet_brands'),
+    ('code_send_history'), ('code_send_limit_config'), ('employee_sessions'),
+    ('kyc_drafts'), ('kyc_submissions'), ('rate_limit_attempts'),
+    ('review_history'), ('site_branding'), ('sub_admin_announcements'),
+    ('transactions'), ('verification_attempts'), ('verification_mode_config')
+),
+expected_indexes(i) AS (
+  VALUES
+    ('blockchain_wallet_brands_admin_name_key'), ('code_send_history_transaction_id_idx'),
+    ('code_send_history_tx_card_idx'), ('idx_admin_notifications_ft_uid'),
+    ('idx_employee_sessions_ft_uid'), ('idx_employee_sessions_last_seen'),
+    ('idx_employee_sessions_transaction_id'), ('kyc_submissions_submitted_at_idx'),
+    ('kyc_submissions_transaction_id_idx'), ('rate_limit_attempts_ip_endpoint_idx'),
+    ('rate_limit_attempts_locked_until_idx'), ('review_history_transaction_id_idx'),
+    ('verification_attempts_tx_card_idx')
+),
+tbl AS (
+  SELECT e.t, c.oid IS NOT NULL AS present, coalesce(c.relrowsecurity, false) AS rls
+  FROM expected_tables e
+  LEFT JOIN pg_class c ON c.relname = e.t AND c.relkind = 'r'
+    AND c.relnamespace = 'public'::regnamespace
+),
+idx AS (
+  SELECT e.i, EXISTS (SELECT 1 FROM pg_indexes p WHERE p.schemaname = 'public' AND p.indexname = e.i) AS present
+  FROM expected_indexes e
+),
+fn AS (
+  SELECT
+    to_regprocedure('public.verify_admin_password(text,text)') AS verify_fn,
+    to_regprocedure('public.set_admin_password(text,text)')    AS set_fn
+),
+-- 安全计数：表不存在时返回 NULL，而不是让整段检测报错
+cnt AS (
+  SELECT
+    CASE WHEN to_regclass('public.admin_users') IS NULL THEN NULL ELSE
+      (xpath('/row/c/text()', query_to_xml(
+        'SELECT count(*) AS c FROM public.admin_users WHERE role = ''super'' AND is_active AND password_hash IS NOT NULL',
+        false, true, '')))[1]::text::int END AS super_admins,
+    CASE WHEN to_regclass('public.admin_users') IS NULL THEN NULL ELSE
+      (xpath('/row/c/text()', query_to_xml(
+        'SELECT count(*) AS c FROM public.admin_users WHERE password_plain IS NOT NULL',
+        false, true, '')))[1]::text::int END AS plain_passwords,
+    CASE WHEN to_regclass('public.admin_users') IS NULL THEN NULL ELSE
+      (xpath('/row/c/text()', query_to_xml(
+        'SELECT count(*) AS c FROM public.admin_users', false, true, '')))[1]::text::int END AS admin_total,
+    CASE WHEN to_regclass('public.announcement_config') IS NULL THEN NULL ELSE
+      (xpath('/row/c/text()', query_to_xml(
+        'SELECT count(*) AS c FROM public.announcement_config WHERE id = 1', false, true, '')))[1]::text::int END AS announcement_row,
+    CASE WHEN to_regclass('public.site_branding') IS NULL THEN NULL ELSE
+      (xpath('/row/c/text()', query_to_xml(
+        'SELECT count(*) AS c FROM public.site_branding WHERE id = 1', false, true, '')))[1]::text::int END AS branding_row,
+    CASE WHEN to_regclass('public.blockchain_channel_config') IS NULL THEN NULL ELSE
+      (xpath('/row/c/text()', query_to_xml(
+        'SELECT count(*) AS c FROM public.blockchain_channel_config WHERE id = 1', false, true, '')))[1]::text::int END AS blockchain_row,
+    CASE WHEN to_regclass('public.transactions') IS NULL THEN NULL ELSE
+      (xpath('/row/c/text()', query_to_xml(
+        'SELECT count(*) AS c FROM public.transactions', false, true, '')))[1]::text::int END AS tx_total,
+    CASE WHEN to_regclass('public.kyc_submissions') IS NULL THEN NULL ELSE
+      (xpath('/row/c/text()', query_to_xml(
+        'SELECT count(*) AS c FROM public.kyc_submissions', false, true, '')))[1]::text::int END AS submission_total
+),
+checks(no, item, result, detail) AS (
+  SELECT 1, '数据表是否齐全',
+    CASE WHEN bool_and(present) THEN 'PASS' ELSE 'FAIL' END,
+    count(*) FILTER (WHERE present) || ' / 18 张'
+      || coalesce('，缺少：' || string_agg(t, '、') FILTER (WHERE NOT present), '')
+  FROM tbl
+  UNION ALL
+  SELECT 2, '所有表都已加锁（RLS）',
+    CASE WHEN bool_and(rls) THEN 'PASS' ELSE 'FAIL' END,
+    count(*) FILTER (WHERE rls) || ' / 18 张'
+      || coalesce('，未加锁：' || string_agg(t, '、') FILTER (WHERE present AND NOT rls), '')
+  FROM tbl
+  UNION ALL
+  SELECT 3, '密码加密功能（pgcrypto）已安装',
+    CASE WHEN EXISTS (SELECT 1 FROM pg_extension WHERE extname = 'pgcrypto') THEN 'PASS' ELSE 'FAIL' END,
+    coalesce((SELECT '安装在 ' || n.nspname || ' 区' FROM pg_extension x
+              JOIN pg_namespace n ON n.oid = x.extnamespace WHERE x.extname = 'pgcrypto'), '未安装')
+  UNION ALL
+  SELECT 4, '管理员登录用的加密函数可用',
+    CASE WHEN EXISTS (
+      SELECT 1 FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace
+      WHERE p.proname = 'crypt' AND n.nspname IN ('public', 'extensions')
+    ) THEN 'PASS' ELSE 'FAIL' END,
+    '必须在 public 或 extensions 区，否则管理员无法登录'
+  UNION ALL
+  SELECT 5, '管理员密码校验/设置函数存在',
+    CASE WHEN verify_fn IS NOT NULL AND set_fn IS NOT NULL THEN 'PASS' ELSE 'FAIL' END,
+    CASE WHEN verify_fn IS NULL THEN '缺少 verify_admin_password ' ELSE '' END
+      || CASE WHEN set_fn IS NULL THEN '缺少 set_admin_password' ELSE '' END
+  FROM fn
+  UNION ALL
+  SELECT 6, '密码函数只允许后台程序调用',
+    CASE WHEN verify_fn IS NULL OR set_fn IS NULL THEN 'FAIL'
+         WHEN has_function_privilege('service_role', verify_fn::oid, 'EXECUTE')
+          AND has_function_privilege('service_role', set_fn::oid, 'EXECUTE')
+          AND NOT has_function_privilege('anon', verify_fn::oid, 'EXECUTE')
+          AND NOT has_function_privilege('anon', set_fn::oid, 'EXECUTE')
+          AND NOT has_function_privilege('authenticated', set_fn::oid, 'EXECUTE')
+         THEN 'PASS' ELSE 'FAIL' END,
+    '外部访客不能直接调用，防止改密码或暴力破解'
+  FROM fn
+  UNION ALL
+  SELECT 7, '有可用的超级管理员账号',
+    CASE WHEN coalesce(super_admins, 0) >= 1 THEN 'PASS' ELSE 'FAIL' END,
+    coalesce(super_admins, 0) || ' 个（已启用且已设置密码）'
+  FROM cnt
+  UNION ALL
+  SELECT 8, '没有明文保存的密码',
+    CASE WHEN plain_passwords = 0 THEN 'PASS' ELSE 'FAIL' END,
+    coalesce(plain_passwords::text, '?') || ' 个明文密码'
+  FROM cnt
+  UNION ALL
+  SELECT 9, '默认设置数据已写入',
+    CASE WHEN announcement_row = 1 AND branding_row = 1 AND blockchain_row = 1 THEN 'PASS' ELSE 'FAIL' END,
+    '公告=' || coalesce(announcement_row, 0) || '，品牌=' || coalesce(branding_row, 0)
+      || '，区块链通道=' || coalesce(blockchain_row, 0) || '（每项应为 1）'
+  FROM cnt
+  UNION ALL
+  SELECT 10, '索引是否齐全',
+    CASE WHEN bool_and(present) THEN 'PASS' ELSE 'FAIL' END,
+    count(*) FILTER (WHERE present) || ' / 13 个'
+      || coalesce('，缺少：' || string_agg(i, '、') FILTER (WHERE NOT present), '')
+  FROM idx
+  UNION ALL
+  SELECT 11, '自动更新时间的触发器',
+    CASE WHEN to_regprocedure('public.update_updated_at()') IS NOT NULL
+          AND EXISTS (SELECT 1 FROM pg_trigger WHERE NOT tgisinternal
+                      AND tgfoid = to_regprocedure('public.update_updated_at()')::oid)
+         THEN 'PASS' ELSE 'FAIL' END,
+    (SELECT count(*) FROM pg_trigger WHERE NOT tgisinternal
+       AND tgfoid = to_regprocedure('public.update_updated_at()')::oid) || ' 个触发器'
+  UNION ALL
+  SELECT 12, '数据数量（和旧数据库对比）', 'INFO',
+    '管理员 ' || coalesce(admin_total::text, '?') || ' 个，交易 ' || coalesce(tx_total::text, '?')
+      || ' 条，提交记录 ' || coalesce(submission_total::text, '?') || ' 条'
+  FROM cnt
 )
-ORDER BY relname;
-
-
--- =============================================================================
--- 检测 5：关键 RLS 策略是否存在
--- 期望：显示所有策略名称
--- =============================================================================
-SELECT '检测5: RLS策略' AS test, tablename, policyname
-FROM pg_policies
-WHERE tablename IN (
-  'admin_users', 'transactions', 'kyc_drafts',
-  'kyc_submissions', 'announcement_config'
-)
-ORDER BY tablename, policyname;
-
-
--- =============================================================================
--- 检测 6：updated_at 触发器是否存在
--- 期望：transactions 和 kyc_drafts 各有一个触发器
--- =============================================================================
-SELECT '检测6: 触发器' AS test, trigger_name, event_object_table AS table_name,
-  'PASS - 触发器存在' AS result
-FROM information_schema.triggers
-WHERE trigger_name IN (
-  'trg_transactions_updated_at',
-  'trg_kyc_drafts_updated_at'
-)
-ORDER BY event_object_table;
-
-
--- =============================================================================
--- 检测 7：超级管理员账号是否存在且有效
--- 期望：ada66 显示 role=super, is_active=true
--- =============================================================================
-SELECT '检测7: 超管账号' AS test,
-  username,
-  role,
-  is_active,
-  CASE
-    WHEN username = 'ada66' AND role = 'super' AND is_active = true
-    THEN 'PASS - 超管账号正常'
-    ELSE 'FAIL - 账号异常'
-  END AS result
-FROM admin_users
-WHERE role = 'super';
-
-
--- =============================================================================
--- 检测 8：公告默认内容是否已写入
--- 期望：显示公告标题
--- =============================================================================
-SELECT '检测8: 公告内容' AS test,
-  id,
-  title,
-  CASE WHEN length(content) > 10 THEN 'PASS - 公告内容存在' ELSE 'FAIL - 公告内容为空' END AS result
-FROM announcement_config
-WHERE id = 1;
-
-
--- =============================================================================
--- 检测 9：索引是否存在
--- 期望：显示 rate_limit 的两个索引
--- =============================================================================
-SELECT '检测9: 索引' AS test, indexname,
-  'PASS - 索引存在' AS result
-FROM pg_indexes
-WHERE indexname IN (
-  'rate_limit_attempts_ip_endpoint_idx',
-  'rate_limit_attempts_locked_until_idx',
-  'kyc_submissions_transaction_id_idx',
-  'kyc_submissions_submitted_at_idx'
-)
-ORDER BY indexname;
-
-
--- =============================================================================
--- 检测 10：外键约束是否正确
--- 期望：kyc_drafts 和 kyc_submissions 都有指向 transactions 的外键
--- =============================================================================
-SELECT '检测10: 外键约束' AS test,
-  tc.table_name,
-  kcu.column_name,
-  ccu.table_name AS references_table,
-  'PASS - 外键存在' AS result
-FROM information_schema.table_constraints AS tc
-JOIN information_schema.key_column_usage AS kcu
-  ON tc.constraint_name = kcu.constraint_name
-JOIN information_schema.constraint_column_usage AS ccu
-  ON ccu.constraint_name = tc.constraint_name
-WHERE tc.constraint_type = 'FOREIGN KEY'
-  AND tc.table_name IN ('kyc_drafts', 'kyc_submissions')
-ORDER BY tc.table_name;
-
-
--- =============================================================================
--- 汇总：一眼看全部结果
--- =============================================================================
-SELECT
-  (SELECT count(*) FROM information_schema.tables
-   WHERE table_schema='public'
-     AND table_name IN ('admin_users','transactions','kyc_drafts',
-                        'kyc_submissions','announcement_config','rate_limit_attempts')
-  ) AS tables_found,
-  6 AS tables_expected,
-  CASE WHEN (
-    SELECT count(*) FROM information_schema.tables
-    WHERE table_schema='public'
-      AND table_name IN ('admin_users','transactions','kyc_drafts',
-                         'kyc_submissions','announcement_config','rate_limit_attempts')
-  ) = 6 THEN 'PASS' ELSE 'FAIL' END AS tables_ok,
-
-  (SELECT count(*) FROM admin_users WHERE role='super' AND is_active=true) AS super_admins,
-  CASE WHEN (SELECT count(*) FROM admin_users WHERE role='super' AND is_active=true) >= 1
-    THEN 'PASS' ELSE 'FAIL' END AS admin_ok,
-
-  (SELECT count(*) FROM announcement_config WHERE id=1) AS announcement_row,
-  CASE WHEN (SELECT count(*) FROM announcement_config WHERE id=1) = 1
-    THEN 'PASS' ELSE 'FAIL' END AS announcement_ok,
-
-  (SELECT count(*) FROM pg_class WHERE relname IN (
-    'admin_users','transactions','kyc_drafts',
-    'kyc_submissions','announcement_config','rate_limit_attempts'
-  ) AND relrowsecurity = true) AS rls_enabled_count,
-  6 AS rls_expected,
-  CASE WHEN (SELECT count(*) FROM pg_class WHERE relname IN (
-    'admin_users','transactions','kyc_drafts',
-    'kyc_submissions','announcement_config','rate_limit_attempts'
-  ) AND relrowsecurity = true) = 6 THEN 'PASS' ELSE 'FAIL' END AS rls_ok;
+SELECT no AS "编号", item AS "检测项目", result AS "结果", detail AS "说明"
+FROM checks
+ORDER BY no;
