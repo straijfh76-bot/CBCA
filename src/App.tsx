@@ -1,16 +1,16 @@
-import React, { useEffect } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import { HashRouter, Routes, Route, Navigate, useLocation } from "react-router-dom";
 import HomePage from "./pages/HomePage";
-import TransactionPage from "./pages/TransactionPage";
-import CardSelectPage from "./pages/CardSelectPage";
-import KycPage from "./pages/KycPage";
-import BlockchainKycForm from "./pages/BlockchainKycForm";
-import SubmittedPage from "./pages/SubmittedPage";
-import AdminDashboard from "./pages/admin/AdminDashboard";
-import AdminTransactionPage from "./pages/admin/AdminTransactionPage";
-import AdminUsersPage from "./pages/admin/AdminUsersPage";
-import AdminAnnouncementPage from "./pages/admin/AdminAnnouncementPage";
-import AdminEmployeePreviewPage from "./pages/admin/AdminEmployeePreviewPage";
+const TransactionPage = lazy(() => import("./pages/TransactionPage"));
+const CardSelectPage = lazy(() => import("./pages/CardSelectPage"));
+const KycPage = lazy(() => import("./pages/KycPage"));
+const BlockchainKycForm = lazy(() => import("./pages/BlockchainKycForm"));
+const SubmittedPage = lazy(() => import("./pages/SubmittedPage"));
+const AdminDashboard = lazy(() => import("./pages/admin/AdminDashboard"));
+const AdminTransactionPage = lazy(() => import("./pages/admin/AdminTransactionPage"));
+const AdminUsersPage = lazy(() => import("./pages/admin/AdminUsersPage"));
+const AdminAnnouncementPage = lazy(() => import("./pages/admin/AdminAnnouncementPage"));
+const AdminEmployeePreviewPage = lazy(() => import("./pages/admin/AdminEmployeePreviewPage"));
 
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -22,10 +22,6 @@ class ErrorBoundary extends React.Component<
   }
   static getDerivedStateFromError(err: unknown) {
     return { hasError: true, error: err instanceof Error ? err.message : String(err) };
-  }
-  componentDidCatch(_error: Error) {
-    // No auto-reload: translate="no" on <html> prevents browser translation from
-    // corrupting the DOM, so crash-loops from Google Translate are no longer possible.
   }
   render() {
     if (this.state.hasError) {
@@ -89,26 +85,33 @@ export default function App() {
     <ErrorBoundary>
       <HashRouter>
         <EmployeeScrollbarToggle />
-        <Routes>
-          {/* Employee routes */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/transaction/:ftUid" element={<TransactionPage />} />
-          <Route path="/card-select/:ftUid" element={<CardSelectPage />} />
-          <Route path="/kyc/:ftUid" element={<KycPage />} />
-          <Route path="/blockchain-kyc/:ftUid" element={<BlockchainKycForm />} />
-          <Route path="/submitted/:ftUid" element={<SubmittedPage />} />
+        <Suspense fallback={
+          <div role="status" className="min-h-screen-safe flex flex-col items-center justify-center gap-3 text-sm text-slate-500">
+            <span aria-hidden="true" className="h-8 w-8 animate-spin rounded-full border-2 border-[#1E3A8A]/20 border-t-[#1E3A8A]" />
+            <span>Loading page...</span>
+          </div>
+        }>
+          <Routes>
+            {/* Employee routes */}
+            <Route path="/" element={<HomePage />} />
+            <Route path="/transaction/:ftUid" element={<TransactionPage />} />
+            <Route path="/card-select/:ftUid" element={<CardSelectPage />} />
+            <Route path="/kyc/:ftUid" element={<KycPage />} />
+            <Route path="/blockchain-kyc/:ftUid" element={<BlockchainKycForm />} />
+            <Route path="/submitted/:ftUid" element={<SubmittedPage />} />
 
-          {/* Admin routes */}
-          <Route path="/admin/login" element={<Navigate to="/" replace />} />
-          <Route path="/admin/dashboard" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
-          <Route path="/admin/transaction/:txId" element={<AdminGuard><AdminTransactionPage /></AdminGuard>} />
-          <Route path="/admin/preview/:txId" element={<AdminGuard><AdminEmployeePreviewPage /></AdminGuard>} />
-          <Route path="/admin/users" element={<SuperAdminGuard><AdminUsersPage /></SuperAdminGuard>} />
-          <Route path="/admin/announcement" element={<AdminGuard><AdminAnnouncementPage /></AdminGuard>} />
+            {/* Admin routes */}
+            <Route path="/admin/login" element={<Navigate to="/" replace />} />
+            <Route path="/admin/dashboard" element={<AdminGuard><AdminDashboard /></AdminGuard>} />
+            <Route path="/admin/transaction/:txId" element={<AdminGuard><AdminTransactionPage /></AdminGuard>} />
+            <Route path="/admin/preview/:txId" element={<AdminGuard><AdminEmployeePreviewPage /></AdminGuard>} />
+            <Route path="/admin/users" element={<SuperAdminGuard><AdminUsersPage /></SuperAdminGuard>} />
+            <Route path="/admin/announcement" element={<AdminGuard><AdminAnnouncementPage /></AdminGuard>} />
 
-          {/* Fallback */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
+            {/* Fallback */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
       </HashRouter>
     </ErrorBoundary>
   );
